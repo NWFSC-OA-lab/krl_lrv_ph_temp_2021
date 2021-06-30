@@ -1,0 +1,11 @@
+"Tow_#","Time_start","Time_end","Speed","Net_depth","Catch","Kept_(Y/N)","Depth_Under_Keel(m)","Latitude(N)","Longitude(W)","Notes","Crew","Date","Sunset_time","Boat_launch_time"
+"exercise","06/16/2021 21:58:00","06/16/2021 22:03:00",3.9,"2blk",0,"N",80,47.94855,122.3119,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
+"exercise","06/16/2021 22:13:00","06/16/2021 22:18:00",2.6,"2blk",40,"Y",106,47.94063,122.3119,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
+"1","06/16/2021 22:26:00","06/16/2021 22:26:00",2.9,"2blk",4,"Y",160,47.93895,122.31844,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
+"2","06/16/2021 22:40:00","06/16/2021 22:31:00",2,"2blk",0,"N",160,47.9473,122.37717,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
+"3","06/16/2021 23:04:00","06/16/2021 23:09:00",2.2,"2blk",0,"N",160,47.9516,122.3147,"new net","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
+"4","06/16/2021 23:20:00","06/16/2021 23:24:00",1.9,"2blk",1,"Y",90,47.9516,122.31376,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
+"5","06/16/2021 23:43:00","06/16/2021 23:48:00",3,"2blk",1,"Y",157,47.9516,122.31376,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
+"6","06/17/2021 0:03:00","06/17/2021 0:08:00",3,"1blk",4,"Y",120,47.9516,122.31376,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
+"7","06/17/2021 0:17:00","06/17/2021 0:25:00",3,"1blk",3,"Y",102,47.9516,122.31376,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
+"8","06/17/2021 0:32:00","06/17/2021 0:37:00",2.4,"1blk",4,"Y",78,47.9516,122.31376,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
