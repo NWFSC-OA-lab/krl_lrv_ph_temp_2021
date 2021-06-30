@@ -1,0 +1,119 @@
+
+---
+title: "Reading Meta data for Krill Towing Data"
+output:
+ html_document:
+    df_print: paged
+    code_folding: hide
+    toc: TRUE
+    toc_depth: 4
+    toc_float: true
+    theme: cerulean
+    highlight: haddock
+    smart: false
+editor_options: 
+  chunk_output_type: inline
+---
+
+
+Hello World
+
+Author: OA Lab, NWFSC
+Title: Reading Meta data for Krill Towing Data
+Date: June 2021 - July 2021
+
+
+# Version Check
+```{r 0.1 Version Check , echo=FALSE, results=FALSE, message=FALSE, warning=FALSE}
+#*********************************
+## Version Check
+#********************************* 
+R.version
+
+```
+
+
+
+# Libraries
+```{r 0.0 Libraries , echo=FALSE, results=FALSE, message=FALSE, warning=FALSE}
+#*********************************
+##Libraries
+#********************************* 
+library(stringr)
+library(tidyverse)
+library(plyr)
+library(nlme)
+library(tidyr)
+library(dbplyr)
+library(dplyr)
+library(purrr)
+library(wql)
+library(lubridate)
+library(tibbletime)
+library(arsenal)
+library(compareDF)
+library(todor)
+#for graphing
+library(ggplot2)
+library(ggfortify)
+library(stringr)
+library(nlme)
+library(RColorBrewer)
+library(patchwork)
+#statistical analysis
+library(gdata)
+library(rsq)
+library(doBy)
+library(lme4)
+library(lmerTest)
+#Rnotebooks 
+library(gridExtra)
+library(kableExtra)
+library(todor)
+#metadata
+library(metacsv)
+
+```
+
+
+
+# 2.) Creating Dataframes and new CSV documents 
+```{r Creating Dataframes and new CSV documents }
+
+#*********************************
+## 2.) Creating Dataframes and new CSV documents
+#*********************************
+
+TOW1_krl_larv_withMETA <- read_csv(here::here("data","KRL_LARV_towingLOG_16JUN21.csv"))
+
+TOW2_krl_larv_withMETA <- read_csv(here::here("data","KRL_LARV_towingLOG_22JUN21.csv"))
+
+
+#|- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - |
+
+```
+
+
+# 3.) Writing Documents 
+```{r Writing Documents}
+
+write.csv(TOW1_krl_larv_withMETA, file = "KRL_LARV_tow1_2021.06.16_meta.csv", row.names = FALSE)
+write.csv(TOW2_krl_larv_withMETA, file = "KRL_LARV_tow2_2021.06.23_meta.csv", row.names = FALSE)
+
+```
+
+
+
+
+```{r}
+#**************E*N*D*************# 
+#*********************************
+## END OF SCRIPT | END OF DOCUMENT 
+#*********************************
+```
+
+
+## END OF SCRIPT | END OF DOCUMENT
+
+
+
