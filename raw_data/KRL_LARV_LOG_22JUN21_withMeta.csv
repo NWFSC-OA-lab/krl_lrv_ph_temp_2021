@@ -1,0 +1,57 @@
+"*metacsv_format_file*"
+"dataset_name",""
+"source_file_name",""
+"project_name",""
+"description",""
+"keywords",""
+"data_source",""
+"r_script_source",""
+"file_creation_date",""
+"last_modified_date",""
+"version_number",""
+"version_history",""
+"editor_name_history",""
+"data_collection_start_date",""
+"data_collection_end_date",""
+"data_collection_location",""
+"species",""
+"life_stage",""
+"data_entered_by",""
+"data_contributor",""
+"data_owner",""
+"institution",""
+"data_point_of_contact",""
+"data_POC_email",""
+"archive_link",""
+"how_to_cite",""
+"acknowledgements",""
+"related_datasets",""
+"***"
+"variable_name","variable_long_name","units","description","data_type","format","missing_value_indicator","instrument","variable_min","variable_max"
+"Tow_#","","","","","","","","",""
+"Time_start","","","","","","","","",""
+"Time_end","","","","","","","","",""
+"Speed","","","","","","","","",""
+"Net_depth","","","","","","","","",""
+"Catch","","","","","","","","",""
+"Kept_(Y/N)","","","","","","","","",""
+"Depth_Under_Keel(m)","","","","","","","","",""
+"Latitude(N)","","","","","","","","",""
+"Longitude(W)","","","","","","","","",""
+"Notes","","","","","","","","",""
+"Crew","","","","","","","","",""
+"Date","","","","","","","","",""
+"Sunset_time","","","","","","","","",""
+"Boat_launch_time","","","","","","","","",""
+"###"
+"Tow_#","Time_start","Time_end","Speed","Net_depth","Catch","Kept_(Y/N)","Depth_Under_Keel(m)","Latitude(N)","Longitude(W)","Notes","Crew","Date","Sunset_time","Boat_launch_time"
+1,"06/22/2021 23:09:00","06/22/2021 23:09:00",2.4,"2blk",0,"N",80,47.94936,122.31142,NA,"Paul McElhany, Michael Maher, Kate Rovinski","06-22-2021",2111,2245
+2,"06/22/2021 23:22:00","06/22/2021 23:28:00",2.5,"1blk",0,"N",80,47.94966,122.312,NA,"Paul McElhany, Michael Maher, Kate Rovinski","06-22-2021",2111,2245
+3,"06/22/2021 23:32:00","06/22/2021 23:38:00",2.7,"1blk",0,"N",90,47.9483,122.3127,NA,"Paul McElhany, Michael Maher, Kate Rovinski","06-22-2021",2111,2245
+4,"06/22/2021 23:43:00","06/22/2021 23:50:00",3,"2blk",4,"Y",110,47.9473,122.284,NA,"Paul McElhany, Michael Maher, Kate Rovinski","06-22-2021",2111,2245
+5,"06/23/2021 0:14:00","06/23/2021 0:20:00",2.4,"2blk",0,"N",80,47.94625,122.31447,NA,"Paul McElhany, Michael Maher, Kate Rovinski","06-22-2021",2111,2245
+6,"06/23/2021 0:23:00","06/23/2021 0:29:00",3,"1blk",0,"N",80,47.94705,122.31361,NA,"Paul McElhany, Michael Maher, Kate Rovinski","06-22-2021",2111,2245
+7,"06/23/2021 0:34:00","06/23/2021 0:40:00",4,"1blk",0,"N",100,47.949,122.31299,NA,"Paul McElhany, Michael Maher, Kate Rovinski","06-22-2021",2111,2245
+8,"06/23/2021 0:52:00","06/23/2021 0:55:00",4,"1blk",0,"N",100,47.94912,122.31299,"lions mane jelly","Paul McElhany, Michael Maher, Kate Rovinski","06-22-2021",2111,2245
+9,"06/23/2021 1:10:00","06/23/2021 1:13:00",4,"1blk",60,"Y",83,47.9455,122.31091,NA,"Paul McElhany, Michael Maher, Kate Rovinski","06-22-2021",2111,2245
+10,"06/23/2021 1:14:00","06/23/2021 1:17:00",4,"1blk",50,"Y",81,47.9516,122.3101,NA,"Paul McElhany, Michael Maher, Kate Rovinski","06-22-2021",2111,2245
