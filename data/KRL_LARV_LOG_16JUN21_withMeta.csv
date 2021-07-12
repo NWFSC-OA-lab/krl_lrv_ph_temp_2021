@@ -1,57 +1,58 @@
-"*metacsv_format_file*"
-"dataset_name",""
-"source_file_name",""
-"project_name",""
-"description",""
-"keywords",""
-"data_source",""
-"r_script_source",""
-"file_creation_date",""
-"last_modified_date",""
-"version_number",""
-"version_history",""
-"editor_name_history",""
-"data_collection_start_date",""
-"data_collection_end_date",""
-"data_collection_location",""
-"species",""
-"life_stage",""
-"data_entered_by",""
-"data_contributor",""
-"data_owner",""
-"institution",""
-"data_point_of_contact",""
-"data_POC_email",""
-"archive_link",""
-"how_to_cite",""
-"acknowledgements",""
-"related_datasets",""
-"***"
-"variable_name","variable_long_name","units","description","data_type","format","missing_value_indicator","instrument","variable_min","variable_max"
-"Tow_#","","","","","","","","",""
-"Time_start","","","","","","","","",""
-"Time_end","","","","","","","","",""
-"Speed","","","","","","","","",""
-"Net_depth","","","","","","","","",""
-"Catch","","","","","","","","",""
-"Kept_(Y/N)","","","","","","","","",""
-"Depth_Under_Keel(m)","","","","","","","","",""
-"Latitude(N)","","","","","","","","",""
-"Longitude(W)","","","","","","","","",""
-"Notes","","","","","","","","",""
-"Crew","","","","","","","","",""
-"Date","","","","","","","","",""
-"Sunset_time","","","","","","","","",""
-"Boat_launch_time","","","","","","","","",""
-"###"
-"Tow_#","Time_start","Time_end","Speed","Net_depth","Catch","Kept_(Y/N)","Depth_Under_Keel(m)","Latitude(N)","Longitude(W)","Notes","Crew","Date","Sunset_time","Boat_launch_time"
-"exercise","06/16/2021 21:58:00","06/16/2021 22:03:00",3.9,"2blk",0,"N",80,47.94855,122.3119,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
-"exercise","06/16/2021 22:13:00","06/16/2021 22:18:00",2.6,"2blk",40,"Y",106,47.94063,122.3119,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
-"1","06/16/2021 22:26:00","06/16/2021 22:26:00",2.9,"2blk",4,"Y",160,47.93895,122.31844,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
-"2","06/16/2021 22:40:00","06/16/2021 22:31:00",2,"2blk",0,"N",160,47.9473,122.37717,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
-"3","06/16/2021 23:04:00","06/16/2021 23:09:00",2.2,"2blk",0,"N",160,47.9516,122.3147,"new net","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
-"4","06/16/2021 23:20:00","06/16/2021 23:24:00",1.9,"2blk",1,"Y",90,47.9516,122.31376,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
-"5","06/16/2021 23:43:00","06/16/2021 23:48:00",3,"2blk",1,"Y",157,47.9516,122.31376,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
-"6","06/17/2021 0:03:00","06/17/2021 0:08:00",3,"1blk",4,"Y",120,47.9516,122.31376,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
-"7","06/17/2021 0:17:00","06/17/2021 0:25:00",3,"1blk",3,"Y",102,47.9516,122.31376,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
-"8","06/17/2021 0:32:00","06/17/2021 0:37:00",2.4,"1blk",4,"Y",78,47.9516,122.31376,"N/A","Paul McElhany, Michael Maher, Kate Rovinski","06-16-2021",2101,2100
+,Detailed Description,,,,,,,,,,,,,
+*metacsv_format_file*,attribute_description,,,,,,,,,,,,,
+dataset_name,Towing Log for Gravid Krill 16JUN21,,,,,,,,,,,,,
+source_file_name,KRL_LARV_towingLOG_16JUN21.csv,,,,,,,,,,,,,
+project_name,Larval Krill Chamber Pilot Project,,,,,,,,,,,,,
+description,towing log details for gravid female krill search IVO Mukilteo,,,,,,,,,,,,,
+keywords,Euphausia pacifica,,,,,,,,,,,,,
+data_source,"Adult, gravid",,,,,,,,,,,,,
+r_script_source,"gravid, tow, environmental chamber rearing, pilot, artifical seawater",,,,,,,,,,,,,
+file_creation_date,observer generated,,,,,,,,,,,,,
+last_modified_date,7/7/21,,,,,,,,,,,,,
+version_number,version 01,,,,,,,,,,,,,
+version_history,7/7/21,,,,,,,,,,,,,
+editor_name_history,16JUN21_towlog_version01,,,,,,,,,,,,,
+data_collection_start_date,Data collected on 16JUN21 for first towing event,,,,,,,,,,,,,
+data_collection_end_date,Data collected on 16JUN21 for first towing event and concluded same day,,,,,,,,,,,,,
+data_collection_location,"47.94855, -122.3119 IVO Mukilteo WA",,,,,,,,,,,,,
+species,species of interest euphausia pacifica,,,,,,,,,,,,,
+life_stage,"Adult, gravid",,,,,,,,,,,,,
+data_entered_by,"Kate Rovinski, kate.rovinski@noaa.gov",,,,,,,,,,,,,
+data_contributor,"Kate Rovinski, kate.rovinski@noaa.gov",,,,,,,,,,,,,
+data_owner,"Paul McElhany, Shallin Busch",,,,,,,,,,,,,
+institution,"Paul McElhany, paul.mcelhany@noaa.gov NWFSC Science Center",,,,,,,,,,,,,
+data_point_of_contact,"Kate Rovinski, kate.rovinski@noaa.gov",,,,,,,,,,,,,
+data_POC_email,"Kate Rovinski, kate.rovinski@noaa.gov",,,,,,,,,,,,,
+archive_link,https://drive.google.com/drive/folders/1Er0LKo1OfFajMm_FkOQwqBdnyGlG7vtr?usp=sharing,,,,,,,,,,,,,
+how_to_cite,Acknowledgements that need to be included in any use of the data.,,,,,,,,,,,,,
+acknowledgements,N/A,,,,,,,,,,,,,
+related_datasets,Related datasets also located (https://drive.google.com/drive/folders/1Er0LKo1OfFajMm_FkOQwqBdnyGlG7vtr?usp=sharing),,,,,,,,,,,,,
+***,,,,,,,,,,,,,,
+variable_name,variable_long_name,units,description,data_type,format,missing_value_indicator,instrument,variable_min,variable_max,,,,,
+Tow_#,towing sequence number,character ,character,character,ordinal,N/A,N/A,1,8,,,,,
+Time_start,"towing start time, local PST",dateTime,numeric ,numeric,m%/dd%/y% HH:MM,N/A,N/A,6/16/21 21:58,6/17/21 0:32,,,,,
+Time_end,"towing end time, local PST time",dateTime,numeric ,numeric,m%/dd%/y% HH:MM,N/A,N/A,6/16/21 22:03,6/17/21 0:37,,,,,
+Speed,towing speed with net deployed,numeric,numeric ,numeric,numeric,N/A,GPS-SOG,1,6,,,,,
+Net_depth,cable scope,character ,character,character,character,N/A,N/A,1BLK,2BLK,,,,,
+Catch,estimated number of gravid females,numeric,numeric ,numeric,numeric,N/A,N/A,0,40,,,,,
+Kept_(Y/N),gravid females boolean catch information,Boolean,Boolean,Boolean,Boolean,N/A,N/A,Y,N,,,,,
+Depth_Under_Keel(m),Depth under the keel not net depth,numeric,numeric ,numeric,numeric,N/A,Garmin,78,160,,,,,
+Latitude(N),Latitude of recorded tow,numeric,numeric ,numeric ,coordinates- projection unknown,N/A,N/A,47.93895,47.9516,,,,,
+Longitude(W),Longitude of recorded tow,numeric,numeric ,numeric ,coordinates- projection unknown,N/A,N/A,122.3119,122.37717,,,,,
+Notes,Recorded observational notes,character ,character,character,character,N/A,N/A,not applicable,not applicable,,,,,
+Crew,Crew members present,character ,character,character,character,N/A,N/A,not applicable,not applicable,,,,,
+Date,Date of tow started,date ,numeric ,numeric,m%/dd%/y%,N/A,N/A,6/16/21 0:00,6/17/21 0:00,,,,,
+Sunset_time,"time of sunset, not twilight",dateTime,numeric ,numeric,m%/dd%/y% HH:MM,N/A,N/A,6/16/21 21:01,6/16/21 21:01,,,,,
+Boat_launch_time,time boat left from town floating dock,date ,numeric ,numeric,m%/dd%/y%,N/A,N/A,6/17/21 21:00,6/17/21 21:00,,,,,
+###,,,,,,,,,,,,,,
+Tow_#,Time_start,Time_end,Speed,Net_depth,Catch,Kept_(Y/N),Depth_Under_Keel(m),Latitude(N),Longitude(W),Notes,Crew,Date,Sunset_time,Boat_launch_time
+exercise,6/16/21 21:58,6/16/21 22:03,3.9,2blk,0,N,80,47.94855,122.3119,N/A,"Paul McElhany, Michael Maher, Kate Rovinski",6/16/21,2101,2100
+exercise,6/16/21 22:13,6/16/21 22:18,2.6,2blk,40,Y,106,47.94063,122.3119,N/A,"Paul McElhany, Michael Maher, Kate Rovinski",6/16/21,2101,2100
+1,6/16/21 22:26,6/16/21 22:26,2.9,2blk,4,Y,160,47.93895,122.31844,N/A,"Paul McElhany, Michael Maher, Kate Rovinski",6/16/21,2101,2100
+2,6/16/21 22:40,6/16/21 22:31,2,2blk,0,N,160,47.9473,122.37717,N/A,"Paul McElhany, Michael Maher, Kate Rovinski",6/16/21,2101,2100
+3,6/16/21 23:04,6/16/21 23:09,2.2,2blk,0,N,160,47.9516,122.3147,new net,"Paul McElhany, Michael Maher, Kate Rovinski",6/16/21,2101,2100
+4,6/16/21 23:20,6/16/21 23:24,1.9,2blk,1,Y,90,47.9516,122.31376,N/A,"Paul McElhany, Michael Maher, Kate Rovinski",6/16/21,2101,2100
+5,6/16/21 23:43,6/16/21 23:48,3,2blk,1,Y,157,47.9516,122.31376,N/A,"Paul McElhany, Michael Maher, Kate Rovinski",6/16/21,2101,2100
+6,6/17/21 0:03,6/17/21 0:08,3,1blk,4,Y,120,47.9516,122.31376,N/A,"Paul McElhany, Michael Maher, Kate Rovinski",6/16/21,2101,2100
+7,6/17/21 0:17,6/17/21 0:25,3,1blk,3,Y,102,47.9516,122.31376,N/A,"Paul McElhany, Michael Maher, Kate Rovinski",6/16/21,2101,2100
+8,6/17/21 0:32,6/17/21 0:37,2.4,1blk,4,Y,78,47.9516,122.31376,N/A,"Paul McElhany, Michael Maher, Kate Rovinski",6/16/21,2101,2100
