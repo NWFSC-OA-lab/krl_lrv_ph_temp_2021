@@ -1,0 +1,11 @@
+Unit,UnitNumber,StartDate,EndDate,TreatmentName,Tempereture,pH,AdditionalTreatmentA
+Chamber,1,8/1/18,8/1/21,High pH,15,7.8,NA
+Chamber,2,8/1/18,8/1/21,Low pH,15,7.2,NA
+Chamber,3,8/1/18,8/1/21,High pH,15,7.8,NA
+Chamber,4,8/1/18,8/1/21,Low pH,15,7.2,NA
+Chamber,5,8/1/18,8/1/21,Low pH,15,7.2,NA
+Chamber,6,8/1/18,8/1/21,Low pH,15,7.2,NA
+Chamber,7,8/1/18,8/1/21,High pH,15,7.8,NA
+Chamber,8,8/1/18,8/1/21,Low pH,15,7.2,NA
+Chamber,9,8/1/18,8/1/21,Low pH,15,7.2,NA
+Chamber,10,8/1/18,8/1/21,Low pH,15,7.2,NA
