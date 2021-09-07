@@ -81,12 +81,116 @@ library(metacsv)
 ## 2.) Creating Dataframes and new CSV documents
 #*********************************
 
-TOW1_krl_larv_withMETA <- read_csv(here::here("data","KRL_LARV_towingLOG_16JUN21.csv"))
-
-TOW2_krl_larv_withMETA <- read_csv(here::here("data","KRL_LARV_towingLOG_22JUN21.csv"))
+jarTest <- read_csv(here::here("raw_Data", "jarLeak", "ISO_krl_chmbr_jarLeak.csv"))
 
 
 #|- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - |
+
+```
+
+
+
+# 2.) Data cleaning
+```{r 2.) Data cleaning}
+
+jarTest <- read_csv(here::here("raw_Data", "jarLeak", "ISO_krl_chmbr_jarLeak.csv"))
+
+jarTest$datePrepared <- as.POSIXct(jarTest$datePrepared, format="%m/%d/%y")
+jarTest$dateSampled <- as.POSIXct(jarTest$datePrepared, format="%m/%d/%y")
+jarTest$SPECsampleTime <- as.POSIXct(jarTest$SPECsampleTime, format="%m/%d/%y %H:%M")
+
+```
+
+
+
+```{r}
+
+jarTest$pH_of_sample_without_correction <- as.numeric(jarTest$pH_of_sample_without_correction)
+
+
+jarTest.summary <- jarTest %>% group_by(Treatment) %>%
+  dplyr::summarize(sd = sd(pH_of_sample_without_correction, na.rm = TRUE), 
+            mean = mean(pH_of_sample_without_correction, na.rm = TRUE), 
+            median = median(pH_of_sample_without_correction, na.rm = TRUE),
+            IQR = IQR(pH_of_sample_without_correction, na.rm = TRUE),
+            n = n()) %>%
+  mutate(se = sd/sqrt(n)) %>%
+  mutate(ci = se*1.96)
+jarTest.summary
+
+
+jarTest.summary_boxplot <- ggplot(jarTest, aes(Treatment, pH_of_sample_without_correction)) +
+            # geom_jitter(color = "grey") +
+            geom_jitter(data = jarTest, aes(Treatment, pH_of_sample_without_correction)) +
+            geom_boxplot(notch = TRUE, outlier.shape = NA, colour = "green") +
+            geom_point(data = jarTest.summary, aes(x=Treatment, y=mean), size=5, color = "purple") + 
+            geom_errorbar(data = jarTest.summary, 
+                          aes(x=Treatment, y=mean, ymin = mean-sd, ymax = mean+sd), 
+                          color = "blue") +
+            geom_errorbar(data = jarTest.summary,
+                          aes(x=Treatment, y=mean, ymin = mean-ci, ymax = mean+ci),
+                          colour = "red") +
+            # # facet_wrap(~placeholder) +
+            # xlab("Treatment") +
+            # ylab("non-Corrected pH") +
+            # ggtitle("non Temperature Corrected pH across Brands") +
+            theme_bw() 
+
+jarTest.summary_boxplot
+
+
+
+```
+
+
+
+```{r}
+
+
+# Creating four separate means from the blank vials per trial
+
+x1 <- droplevels(filter(jarTest, Manufacturer != "N/A"))
+
+x1.jarTest.summary <- x1 %>% group_by(Treatment) %>%
+  dplyr::summarize(sd = sd(pH_of_sample_without_correction, na.rm = TRUE), 
+            mean = mean(pH_of_sample_without_correction, na.rm = TRUE), 
+            median = median(pH_of_sample_without_correction, na.rm = TRUE),
+            IQR = IQR(pH_of_sample_without_correction, na.rm = TRUE),
+            n = n()) %>%
+  mutate(se = sd/sqrt(n)) %>%
+  mutate(ci = se*1.96)
+x1.jarTest.summary 
+
+
+jarTest.summary_boxplot2 <- ggplot(jarTest, aes(Treatment, pH_of_sample_without_correction)) +
+            # geom_jitter(color = "grey") +
+            # geom_jitter(data = jarTest, aes(Treatment, pH_of_sample_without_correction)) +
+            geom_jitter(aes(colour = Manufacturer)) +
+            
+            # # facet_wrap(~TrialID) +
+            # xlab("Treatment") +
+            # ylab("µg O2 h -1 g -1") +
+            # ggtitle("Corrected Slope Summary Plot") +
+            theme_bw() 
+
+jarTest.summary_boxplot2
+
+
+
+jarTest.summary_boxplot3 <- ggplot(jarTest, aes(Treatment, pH_of_sample_without_correction)) +
+            # geom_jitter(color = "grey") +
+            # geom_jitter(data = jarTest, aes(Treatment, pH_of_sample_without_correction)) +
+            geom_jitter(aes(colour = insertType)) +
+            
+            # # facet_wrap(~TrialID) +
+            # xlab("Treatment") +
+            # ylab("µg O2 h -1 g -1") +
+            # ggtitle("Corrected Slope Summary Plot") +
+            theme_bw() 
+
+jarTest.summary_boxplot3
+
+
 
 ```
 
