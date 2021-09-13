@@ -67,6 +67,7 @@ library(patchwork)
 library(gridExtra)
 library(kableExtra)
 library(todor)
+library(knitr)
 #metadata
 library(metacsv)
 
@@ -138,6 +139,8 @@ jarTest.summary_boxplot <- ggplot(jarTest, aes(Treatment, pH_of_sample_without_c
 
 jarTest.summary_boxplot
 
+kable(jarTest.summary, digits = 4)
+write.csv(jarTest.summary, "ISO_KRL_jarTest.summary.csv")
 
 
 ```
