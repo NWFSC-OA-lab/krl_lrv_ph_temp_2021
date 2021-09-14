@@ -34,7 +34,7 @@ R.version
 
 
 
-# Libraries
+# 1.) Libraries
 ```{r 0.0 Libraries , echo=FALSE, results=FALSE, message=FALSE, warning=FALSE}
 #*********************************
 ##Libraries
@@ -83,6 +83,7 @@ library(metacsv)
 #*********************************
 
 jarTest <- read_csv(here::here("raw_Data", "jarLeak", "ISO_krl_chmbr_jarLeak.csv"))
+jarSPEC <- read_csv(here::here("raw_Data", "jarLeak", "SpecData_JarLeakTest(shinyapp).csv"))
 
 
 #|- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - |
@@ -91,7 +92,7 @@ jarTest <- read_csv(here::here("raw_Data", "jarLeak", "ISO_krl_chmbr_jarLeak.csv
 
 
 
-# 2.) Data cleaning
+# 3.) Data cleaning
 ```{r 2.) Data cleaning}
 
 jarTest <- read_csv(here::here("raw_Data", "jarLeak", "ISO_krl_chmbr_jarLeak.csv"))
@@ -104,7 +105,45 @@ jarTest$SPECsampleTime <- as.POSIXct(jarTest$SPECsampleTime, format="%m/%d/%y %H
 
 
 
-```{r}
+
+#### 3.1) Data Cleaning- Shiny SPEC app output
+```{r Data Cleaning- Shiny SPEC app output}
+
+# jarSPEC$chamber_number <- jarSPEC %>%
+#   dplyr::rename(chamber_number = unit_number)
+# 
+# jarSPEC$unit_number <- jarSPEC %>%
+#   dplyr::rename(chamber_number = unit_number)
+
+jarSPEC$SPECdate <- ""
+jarSPEC$SPECdate <-as.POSIXct(jarSPEC$date, format="%Y/%m/%d")
+jarSPEC$SPECdate <-as.character(jarSPEC$SPECdate)
+
+#Statement about High CO2 - id_1, date, unit_number
+#Statement about Mid CO2
+#Statement about Lo CO2
+
+jarSPEC$treatment <- ""
+
+jarSPEC$treatment %>%
+  select(jarSPEC$id_1, jarSPEC$unit_number, jarSPEC$date)  %>%
+  mutate(
+    type = case_when(
+      id_1 == "bottle" | unit_number == "10" | date == "2021-08-27" ~ "HiCO2",
+      id_1 == "bottle" | unit_number == "9" | date == "2021-08-27" ~ "LoCO2",
+      TRUE                      ~ "other"
+    )
+  )
+
+
+```
+
+
+
+
+
+# 4.) Jar Test Summary
+```{r  Jar Test Summary}
 
 jarTest$pH_of_sample_without_correction <- as.numeric(jarTest$pH_of_sample_without_correction)
 
@@ -147,8 +186,9 @@ write.csv(jarTest.summary, "ISO_KRL_jarTest.summary.csv")
 
 
 
-```{r}
 
+### 4.1) Jar Test Plots
+```{r Jar test plots}
 
 # Creating four separate means from the blank vials per trial
 
@@ -199,7 +239,45 @@ jarTest.summary_boxplot3
 
 
 
+5.) jarSPEC results & Summary
 
+```{r  JarSPEC_Test Summary}
+
+jarSPEC$pHinsitu <- as.numeric(jarSPEC$pHinsitu)
+
+
+jarSPEC.summary <- jarSPEC %>% group_by(Treatment) %>%
+  dplyr::summarize(sd = sd(pHinsitu, na.rm = TRUE), 
+            mean = mean(pHinsitu, na.rm = TRUE), 
+            median = median(pHinsitu, na.rm = TRUE),
+            IQR = IQR(pHinsitu, na.rm = TRUE),
+            n = n()) %>%
+  mutate(se = sd/sqrt(n)) %>%
+  mutate(ci = se*1.96)
+jarTest.summary
+
+
+jarTest.summary_boxplot <- ggplot(jarTest, aes(Treatment, pH_of_sample_without_correction)) +
+            # geom_jitter(color = "grey") +
+            geom_jitter(data = jarTest, aes(Treatment, pH_of_sample_without_correction)) +
+            geom_boxplot(notch = TRUE, outlier.shape = NA, colour = "green") +
+            geom_point(data = jarTest.summary, aes(x=Treatment, y=mean), size=5, color = "purple") + 
+            geom_errorbar(data = jarTest.summary, 
+                          aes(x=Treatment, y=mean, ymin = mean-sd, ymax = mean+sd), 
+                          color = "blue") +
+            geom_errorbar(data = jarTest.summary,
+                          aes(x=Treatment, y=mean, ymin = mean-ci, ymax = mean+ci),
+                          colour = "red") +
+            # # facet_wrap(~placeholder) +
+            # xlab("Treatment") +
+            # ylab("non-Corrected pH") +
+            # ggtitle("non Temperature Corrected pH across Brands") +
+            theme_bw() 
+
+jarTest.summary_boxplot
+
+kable(jarTest.summary, digits = 4)
+write.csv(jarTest.summary, "ISO_KRL_jarTest.summary.csv")
 
 
 
