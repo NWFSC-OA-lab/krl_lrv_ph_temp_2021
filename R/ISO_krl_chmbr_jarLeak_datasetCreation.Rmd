@@ -101,6 +101,11 @@ jarTest$datePrepared <- as.POSIXct(jarTest$datePrepared, format="%m/%d/%y")
 jarTest$dateSampled <- as.POSIXct(jarTest$datePrepared, format="%m/%d/%y")
 jarTest$SPECsampleTime <- as.POSIXct(jarTest$SPECsampleTime, format="%m/%d/%y %H:%M")
 
+
+
+
+
+
 ```
 
 
@@ -123,22 +128,85 @@ jarSPEC$SPECdate <-as.character(jarSPEC$SPECdate)
 #Statement about Mid CO2
 #Statement about Lo CO2
 
-jarSPEC$treatment <- ""
-
-jarSPEC$treatment %>%
-  select(jarSPEC$id_1, jarSPEC$unit_number, jarSPEC$date)  %>%
-  mutate(
-    type = case_when(
-      id_1 == "bottle" | unit_number == "10" | date == "2021-08-27" ~ "HiCO2",
-      id_1 == "bottle" | unit_number == "9" | date == "2021-08-27" ~ "LoCO2",
-      TRUE                      ~ "other"
-    )
-  )
+# # TODO No. 1
+# jarSPEC$treatment <- ""
+# 
+# jarSPEC$treatment %>%
+#   select(jarSPEC$id_1, jarSPEC$unit_number, jarSPEC$date)  %>%
+#   mutate(
+#     type = case_when(
+#       id_1 == "bottle" | unit_number == "10" | date == "2021-08-27" ~ "HiCO2",
+#       id_1 == "bottle" | unit_number == "9" | date == "2021-08-27" ~ "LoCO2",
+#       TRUE                      ~ "other"
+#     )
+#   )
 
 
 ```
 
+#### 3.2) Fun with Plots
+```{r Fun with Plots by treatment}
 
+jarSPEC.summary <- jarSPEC %>% group_by(treatOther) %>%
+  dplyr::summarize(sd = sd(pHinsitu, na.rm = TRUE), 
+            mean = mean(pHinsitu, na.rm = TRUE), 
+            median = median(pHinsitu, na.rm = TRUE),
+            IQR = IQR(pHinsitu, na.rm = TRUE),
+            n = n()) %>%
+  mutate(se = sd/sqrt(n)) %>%
+  mutate(ci = se*1.96)
+jarSPEC.summary
+
+
+jarSPEC.summary_boxplot <- ggplot(jarSPEC, aes(treatOther, pHinsitu)) +
+            # geom_jitter(color = "grey") +
+            geom_jitter(data = jarSPEC, aes(treatOther, pHinsitu)) +
+            geom_boxplot(notch = TRUE, outlier.shape = NA, colour = "green") +
+            geom_point(data = jarSPEC.summary, aes(x=treatOther, y=mean), size=5, color = "purple") + 
+            geom_errorbar(data = jarSPEC.summary, 
+                          aes(x=treatOther, y=mean, ymin = mean-sd, ymax = mean+sd), 
+                          color = "blue") +
+            geom_errorbar(data = jarSPEC.summary,
+                          aes(x=treatOther, y=mean, ymin = mean-ci, ymax = mean+ci),
+                          colour = "red") +
+            # # facet_wrap(~placeholder) +
+            # xlab("Treatment") +
+            # ylab("non-Corrected pH") +
+            # ggtitle("non Temperature Corrected pH across Brands") +
+            theme_bw() 
+
+jarSPEC.summary_boxplot
+
+
+# Calculate pHinsitu Average for each bottle
+# what I expect CH10 = 7.5196436, CH09= 7.81287312
+
+subsetCH09_startbottle <- subset(jarSPEC, date == "8/27/21" & unit_ID == "Chamber_9")
+bottle_9 <- mean(subsetCH09_startbottle$pHinsitu)
+print(bottle_9)
+# [1] 7.812873
+
+subsetCH10_startbottle <- subset(jarSPEC, date == "8/27/21" & unit_ID == "Chamber_10")
+bottle_10 <- mean(subsetCH10_startbottle$pHinsitu)
+print(bottle_10)    
+# [1] 7.519644
+
+subsetCH09_jarSPECs <- subset(jarSPEC, date == "8/30/21" & unit_ID == "Chamber_09")
+
+jarSPEC.summary_boxplot <- ggplot(jarSPEC, aes(treatOther, pHinsitu)) +
+            # geom_jitter(color = "grey") +
+            geom_point(data = jarSPEC, aes(treatOther, pHinsitu)) +
+            abline(h=subsetCH09_startbottle)
+            # # facet_wrap(~placeholder) +
+            # xlab("Treatment") +
+            # ylab("non-Corrected pH") +
+            # ggtitle("non Temperature Corrected pH across Brands") +
+            theme_bw() 
+
+jarSPEC.summary_boxplot
+
+
+```
 
 
 

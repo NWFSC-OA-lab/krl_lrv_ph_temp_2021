@@ -1,13 +1,13 @@
 sequence,datePrepared,jarID,Container,Manufacturer,Manufacturer.Type,chamber,Treatment,bottleTime,bubbleBottleNumber,bubbleBottleStartPSU,bubbleBottleSalinityPSU,salinityDIFF,SPECbag_Day00,SPECcohort_Day00,bottleTimeNote,dateSampled,insertType,SPECsampleTime,SPECsampleNote,SPECbag_Day03,SPECcohort_Day03,pH_of_sample_without_correction,Notes
 29,8/27/21,Bottle1,bottle,bottle,Bottle1,CH09,MidCO2,8/27/21 12:17,CH09_Bottle1,29.99,31.37,1.38,6,N/A,N/A,N/A,N/A,8/27/21 12:20,N/A,6,N/A,7.602352239,N/A
-31,8/27/21,Bottle2,bottle,bottle,Bottle2,CH10,HiCO2,8/27/21 12:20,CH09_Bottle2,29.2,29.2,0,7,N/A,N/A,N/A,N/A,8/27/21 12:20,N/A,7,N/A,7.295380105,N/A
+31,8/27/21,Bottle2,bottle,bottle,Bottle2,CH10,HiCO2,8/27/21 12:20,CH09_Bottle2,29.2,30.25,1.05,7,N/A,N/A,N/A,N/A,8/27/21 12:20,N/A,7,N/A,7.295380105,N/A
 33,8/27/21,Bottle3,bottle,bottle,Bottle3,CH09,MidCO2,8/27/21 14:52,CH09_Bottle3,28.9,29.54,0.64,9,N/A,N/A,N/A,N/A,8/27/21 12:20,N/A,9,N/A,7.60132021,N/A
 35,8/27/21,Bottle3,bottle,bottle,Bottle3b,CH09,MidCO2,8/27/21 15:33,CH09_Bottle3a,28.9,29.05,0.15,12,N/A,N/A,N/A,N/A,8/27/21 12:20,N/A,12,N/A,7.60235411,N/A
 37,8/27/21,Bottle4,bottle,bottle,Bottle4,CH09,MidCO2,8/27/21 16:42,CH09_Bottle4,30.01,29.74,-0.27,3,N/A,N/A,N/A,N/A,8/27/21 12:20,N/A,3,N/A,7.61796407,N/A
 41,8/30/21,N/A,bottle,bottle,N/A,CH09,LoCO2,8/30/21 13:49,N/A,29.55,29.7,0.15,N/A,Cohort1,8/30/21 13:49,8/30/21,N/A,8/30/21 13:49,N/A,5,Cohort1,8.1119168,N/A
 42,8/30/21,N/A,bottle,bottle,N/A,CH09,LoCO2,8/30/21 13:52,N/A,29.55,29.7,0.15,N/A,Cohort1,8/30/21 13:52,8/30/21,N/A,8/30/21 13:52,N/A,6,Cohort1,8.122130356,N/A
 30,8/27/21,Bottle1,bottle,bottle,Bottle1,CH10,HiCO2,8/27/21 12:18,CH10_Bottle1,29.99,31.06,1.07,8,N/A,N/A,N/A,N/A,8/27/21 12:20,N/A,8,N/A,7.607786171,N/A
-32,8/27/21,Bottle2,bottle,bottle,Bottle2,CH10,HiCO2,8/27/21 12:21,CH10_Bottle2,29.2,29.2,0,1,N/A,N/A,N/A,N/A,8/27/21 12:20,N/A,1,N/A,7.316129633,N/A
+32,8/27/21,Bottle2,bottle,bottle,Bottle2,CH10,HiCO2,8/27/21 12:21,CH10_Bottle2,29.2,30.25,1.05,1,N/A,N/A,N/A,N/A,8/27/21 12:20,N/A,1,N/A,7.316129633,N/A
 34,8/27/21,Bottle3,bottle,bottle,Bottle3,CH10,HiCO2,8/27/21 14:54,CH10_Bottle3,28.9,29.45,0.55,5,N/A,N/A,N/A,N/A,8/27/21 12:20,N/A,5,N/A,7.360164547,N/A
 36,8/27/21,Bottle3,bottle,bottle,Bottle3b,CH10,HiCO2,8/27/21 15:40,CH10_Bottle3a,28.9,29.23,0.33,11,N/A,N/A,N/A,N/A,8/27/21 12:20,N/A,11,N/A,7.340363942,N/A
 38,8/27/21,Bottle4,bottle,bottle,Bottle4,CH10,HiCO2,8/27/21 17:04,CH10_Bottle4,30.01,29.98,-0.03,2,N/A,N/A,N/A,N/A,8/27/21 12:20,N/A,2,N/A,7.401493845,N/A
