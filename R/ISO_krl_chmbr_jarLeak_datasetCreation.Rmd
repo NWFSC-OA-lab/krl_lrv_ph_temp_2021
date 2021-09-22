@@ -82,8 +82,11 @@ library(metacsv)
 ## 2.) Creating Dataframes and new CSV documents
 #*********************************
 
-jarTest <- read_csv(here::here("raw_Data", "jarLeak", "ISO_krl_chmbr_jarLeak.csv"))
-jarSPEC <- read_csv(here::here("raw_Data", "jarLeak", "SpecData_JarLeakTest(shinyapp).csv"))
+jarTest <- read_csv(here::here("raw_Data", "jarLeak", "SpecData(jarLeakTrial_ID_3jarID).csv"))
+
+bottleMAP <- read_csv(here::here("raw_Data", "jarLeak", "BottleSalinityMap.csv"))
+
+jarMAP <- read_csv(here::here("raw_Data", "jarLeak", "jarBottleMap.csv"))
 
 
 #|- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - |
@@ -95,12 +98,7 @@ jarSPEC <- read_csv(here::here("raw_Data", "jarLeak", "SpecData_JarLeakTest(shin
 # 3.) Data cleaning
 ```{r 2.) Data cleaning}
 
-jarTest <- read_csv(here::here("raw_Data", "jarLeak", "ISO_krl_chmbr_jarLeak.csv"))
-
-jarTest$datePrepared <- as.POSIXct(jarTest$datePrepared, format="%m/%d/%y")
-jarTest$dateSampled <- as.POSIXct(jarTest$datePrepared, format="%m/%d/%y")
-jarTest$SPECsampleTime <- as.POSIXct(jarTest$SPECsampleTime, format="%m/%d/%y %H:%M")
-
+jarTest$date <- as.POSIXct(jarTest$datePrepared, format="%m/%d/%y")
 
 
 
