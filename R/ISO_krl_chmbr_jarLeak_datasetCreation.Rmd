@@ -88,7 +88,7 @@ bottleMAP <- read_csv(here::here("raw_Data", "jarLeak", "BottleSalinityMap.csv")
 
 jarMAP <- read_csv(here::here("raw_Data", "jarLeak", "jarBottleMap.csv"))
 
-
+# TODO missing six measurements
 #|- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - |
 
 ```
@@ -98,54 +98,52 @@ jarMAP <- read_csv(here::here("raw_Data", "jarLeak", "jarBottleMap.csv"))
 # 3.) Data cleaning
 ```{r 2.) Data cleaning}
 
-jarTest$date <- as.POSIXct(jarTest$datePrepared, format="%m/%d/%y")
+jarTest$date <- as.POSIXct(jarTest$date, format="%m/%d/%y")
 
+jarTest$jarID <- ""
+jarTest$jarID <-
+jarTest$jarID <- jarTest$id_3
 
+unique(jarTest$jarID)
+#  [1] "LoCO2_30AUG21" "J3C"           "J3D"           "J3L"          
+#  [5] "J3K"           "J2A"           "J3F"           "J3B"          
+#  [9] "J3H"           "J2H"           "J2B"           "J3A"          
+# [13] "JD1"           "JA1"           "JC1"           "J2G"          
+# [17] "J3E"           "J3G"           "J2D"           "J2E"          
+# [21] "J2F"           "CH09_01"       "CH10_01"       "CH10_02"      
+# [25] "CH10_03"       "CH09_03"       "CH10_03a"      "CH09_03a"     
+# [29] "CH09_04"       "CH10_04" 
 
+# 55 observations
+#TODO 55 SPEC samples taken, not 56?
+# want to only have Jar IDs with all other values as "N/A"
+# 
+# jarTest[order(jarTest[,'JarID']), ]
 
-
+# jarTest <- jarTest %>% mutate(jarID=case_when(
+#                           (jarID == "LoCO2_30AUG21") ~"N/A",
+#                           (jarID == "CH09_01") ~"N/A",
+#                           (jarID == "CH10_01") ~"N/A",
+#                           (jarID == "CH10_02") ~"N/A",
+#                           (jarID == "CH09_03") ~"N/A",
+#                           (jarID == "CH10_03") ~"N/A",
+#                           (jarID == "CH10_03a") ~"N/A",
+#                           (jarID == "CH09_04") ~"N/A",
+#                           (jarID == "CH10_04") ~"N/A",
+#                           TRUE ~ jarTest$jarID %>% select(contains("J"))
+#                         )
+#                     ) 
+  
 ```
 
 
 
 
-#### 3.1) Data Cleaning- Shiny SPEC app output
-```{r Data Cleaning- Shiny SPEC app output}
-
-# jarSPEC$chamber_number <- jarSPEC %>%
-#   dplyr::rename(chamber_number = unit_number)
-# 
-# jarSPEC$unit_number <- jarSPEC %>%
-#   dplyr::rename(chamber_number = unit_number)
-
-jarSPEC$SPECdate <- ""
-jarSPEC$SPECdate <-as.POSIXct(jarSPEC$date, format="%Y/%m/%d")
-jarSPEC$SPECdate <-as.character(jarSPEC$SPECdate)
-
-#Statement about High CO2 - id_1, date, unit_number
-#Statement about Mid CO2
-#Statement about Lo CO2
-
-# # TODO No. 1
-# jarSPEC$treatment <- ""
-# 
-# jarSPEC$treatment %>%
-#   select(jarSPEC$id_1, jarSPEC$unit_number, jarSPEC$date)  %>%
-#   mutate(
-#     type = case_when(
-#       id_1 == "bottle" | unit_number == "10" | date == "2021-08-27" ~ "HiCO2",
-#       id_1 == "bottle" | unit_number == "9" | date == "2021-08-27" ~ "LoCO2",
-#       TRUE                      ~ "other"
-#     )
-#   )
-
-
-```
 
 #### 3.2) Fun with Plots
 ```{r Fun with Plots by treatment}
 
-jarSPEC.summary <- jarSPEC %>% group_by(treatOther) %>%
+jarTest.summary <- jarTest %>% group_by(treatment) %>%
   dplyr::summarize(sd = sd(pHinsitu, na.rm = TRUE), 
             mean = mean(pHinsitu, na.rm = TRUE), 
             median = median(pHinsitu, na.rm = TRUE),
@@ -153,27 +151,27 @@ jarSPEC.summary <- jarSPEC %>% group_by(treatOther) %>%
             n = n()) %>%
   mutate(se = sd/sqrt(n)) %>%
   mutate(ci = se*1.96)
-jarSPEC.summary
+jarTest.summary
 
 
-jarSPEC.summary_boxplot <- ggplot(jarSPEC, aes(treatOther, pHinsitu)) +
+jarTest.summary_boxplot <- ggplot(jarTest, aes(treatment, pHinsitu)) +
             # geom_jitter(color = "grey") +
-            geom_jitter(data = jarSPEC, aes(treatOther, pHinsitu)) +
+            geom_jitter(data = jarTest, aes(treatment, pHinsitu)) +
             geom_boxplot(notch = TRUE, outlier.shape = NA, colour = "green") +
-            geom_point(data = jarSPEC.summary, aes(x=treatOther, y=mean), size=5, color = "purple") + 
-            geom_errorbar(data = jarSPEC.summary, 
-                          aes(x=treatOther, y=mean, ymin = mean-sd, ymax = mean+sd), 
+            geom_point(data = jarTest.summary, aes(x=treatment, y=mean), size=5, color = "purple") + 
+            geom_errorbar(data = jarTest.summary, 
+                          aes(x=treatment, y=mean, ymin = mean-sd, ymax = mean+sd), 
                           color = "blue") +
-            geom_errorbar(data = jarSPEC.summary,
-                          aes(x=treatOther, y=mean, ymin = mean-ci, ymax = mean+ci),
+            geom_errorbar(data = jarTest.summary,
+                          aes(x=treatment, y=mean, ymin = mean-ci, ymax = mean+ci),
                           colour = "red") +
             # # facet_wrap(~placeholder) +
             # xlab("Treatment") +
             # ylab("non-Corrected pH") +
-            # ggtitle("non Temperature Corrected pH across Brands") +
+            # ggtitle("pH insitu across treatments") +
             theme_bw() 
 
-jarSPEC.summary_boxplot
+jarTest.summary_boxplot
 
 
 # Calculate pHinsitu Average for each bottle
