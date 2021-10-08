@@ -1,0 +1,11 @@
+﻿experiment,unit,unit_number,id_1,id_2,id_3,time,date,salinity,pHat25,fileName,unit_ID,alk,insituTemp,pHinsitu_end,pHinsitu_start,dateString,treatName,treatpH,treatTemp,treatOther,dic,tankTemp,cohort,TRIS_ID
+Zoea,Chamber,1,round_2,NA,NA,0.458333333,5/17/21,33.3,8.122444578,TRIS_validation_round2_May_2021.xlsx,Chamber_1,2198.9945,15,8.276553111,7.907578399,5/17/21,Low_pH_High_T,7.2,15,,1876.415593,NA,TrisR3,TR3_1
+Zoea,Chamber,1,round_2,NA,NA,0.458333333,5/17/21,33.3,8.127727351,TRIS_validation_round2_May_2021.xlsx,Chamber_1,2198.9945,15,8.281916595,7.907578399,5/17/21,Low_pH_High_T,7.2,15,,1873.234452,NA,TrisR3,TR3_2
+Zoea,Chamber,1,round_2,NA,NA,0.458333333,5/17/21,33.3,8.123687333,TRIS_validation_round2_May_2021.xlsx,Chamber_1,2198.9945,15,8.277814888,7.907578399,5/17/21,Low_pH_High_T,7.2,15,,1875.668767,NA,TrisR3,TR3_3
+Zoea,Chamber,1,round_2,NA,NA,0.458333333,5/17/21,33.3,8.12100733,TRIS_validation_round2_May_2021.xlsx,Chamber_1,2198.9945,15,8.275093839,7.907578399,5/17/21,Low_pH_High_T,7.2,15,,1877.278126,NA,TrisR3,TR3_4
+Zoea,Chamber,1,round_2,NA,NA,0.458333333,5/17/21,33.3,8.125324036,TRIS_validation_round2_May_2021.xlsx,Chamber_1,2198.9945,15,8.279476609,7.907578399,5/17/21,Low_pH_High_T,7.2,15,,1874.683766,NA,TrisR3,TR3_5
+Zoea,Chamber,1,round_2,NA,NA,0.458333333,5/17/21,33.3,8.119430847,TRIS_validation_round2_May_2021.xlsx,Chamber_1,2198.9945,15,8.273493165,7.907578399,5/17/21,Low_pH_High_T,7.2,15,,1878.222772,NA,TrisR3,TR3_6
+Zoea,Chamber,1,round_2,NA,NA,0.458333333,5/17/21,33.3,8.109093055,TRIS_validation_round2_May_2021.xlsx,Chamber_1,2198.9945,15,8.262995829,7.907578399,5/17/21,Low_pH_High_T,7.2,15,,1884.37975,NA,TrisR3,TR3_7
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,, ,,,,,,,,,,,,,,,,,

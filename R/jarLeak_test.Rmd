@@ -85,9 +85,18 @@ library(seacarb)
 ## 2.) Creating Dataframes and new CSV documents
 #*********************************
 
-jarTest <- read_csv(here::here("raw_Data", "jarLeak", "SpecData(Day00_to_Day03).csv"))
+jarTest <- read_csv(here::here("raw_Data", "jarLeak", "SpecData_Cohort_1_to_8_Day00Day03.csv"))
 bottleMAP <- read_csv(here::here("raw_Data", "jarLeak", "BottleSalinityMap.csv"))
 jarMAP <- read_csv(here::here("raw_Data", "jarLeak", "jarBottleMap.csv"))
+
+repeatability <- read_csv(here::here("Data", "SpecData_Repeatability_compare.csv"))
+rpt_cohort1 <- read_csv(here::here("Data", "TRISround1_round2_cohort1.csv"))
+rpt_cohort2 <- read_csv(here::here("Data", "TRISround1_round2_cohort2.csv"))
+rpt_cohort3 <- read_csv(here::here("Data", "TRISround1_round2_cohort3.csv"))
+rpt_map <- read_csv(here::here("Data", "TRISmap.csv"))
+
+IO_val <- read_csv(here::here("Data", "InstantOceanValidations.csv"))
+
 
 # TODO missing six measurements
 #|- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - |
@@ -100,21 +109,38 @@ jarMAP <- read_csv(here::here("raw_Data", "jarLeak", "jarBottleMap.csv"))
 Key points: 14 jars per Chamber
 28x2 Jar Observations should be recorded
 56 observations total
-41 observations in Jar History
-15 missing observations? 
+
 ```{r Jar Test Cleaning}
 #*********************************
 ## 3.) Jar Test Cleaning
 #*********************************
 
 jarTest$date <- as.POSIXct(jarTest$date, format="%m/%d/%y")
-jarTest <- subset( jarTest, select = -c(Jar_ID))
 names(jarTest)
-#  [1] "experiment"   "unit"         "unit_number"  "id_1"         "id_2"        
-#  [6] "id_3"         "time"         "date"         "salinity"     "pHat25"      
-# [11] "fileName"     "unit_ID"      "alk"          "insituTemp"   "pHinsitu"    
-# [16] "dateString"   "treatName"    "treatpH"      "treatTemp"    "treatOther"  
-# [21] "dic"          "JarID"        "BottleCohort" "treatment" 
+#  [1] "experiment"  "unit"        "unit_number" "id_1"        "id_2"        "id_3"        "time"        "date"       
+#  [9] "salinity"    "pHat25"      "fileName"    "unit_ID"     "alk"         "insituTemp"  "pHinsitu"    "dateString" 
+# [17] "treatName"   "treatpH"     "treatTemp"   "treatOther"  "dic"         "tankTemp"    "JarID"       "treatment"
+
+# jarTest columns of interest
+#  [1]  "unit"     "unit_number" "id_1"        "id_2"        "id_3"       "date"
+#  [7] "salinity    "unit_ID"      "pHinsitu"     "JarID"       "treatment"
+# 11 items of interest
+
+# Jar SPEC Subelection Time!
+jar_SPEC <- subset(jarTest, select = -c(experiment,
+                                               time, 
+                                              pHat25,
+                                              fileName,
+                                              treatName,
+                                              treatpH, 
+                                              alk,
+                                              insituTemp,
+                                              dateString,
+                                              treatName,
+                                              treatpH,
+                                              treatTemp,
+                                              treatOther,
+                                              dic))
 
 #Jar Map cleaning
 names(jarMAP)
@@ -122,7 +148,7 @@ names(jarMAP)
  # [5] "BottleDate"     "BottleNumber"   "JarID"          "insert"        
  # [9] "Manufacturer_1" "Treatment"
 
-#Creating a 6 column file -  Creating a Jar History File
+#Creating at least 6 column file -  Creating a Jar History File
 # column 1 JarID
 # column 2 Source Bottle
 # column 3 Bottle pH Day 00
@@ -130,131 +156,58 @@ names(jarMAP)
 # column 5 delta of pH
 # column 6 Jar Description (manufacturer and insert)
 
-jar_History <- merge(jarTest, jarMAP, by = "JarID")
+jar_History <- merge(jar_SPEC, jarMAP, by = "JarID")
+# loss of observation by dropping bottles
+
 names(jar_History)
-#  [1] "JarID"          "experiment"     "unit"           "unit_number"   
-#  [5] "id_1"           "id_2"           "id_3"           "time"          
-#  [9] "date"           "salinity"       "pHat25"         "fileName"      
-# [13] "unit_ID"        "alk"            "insituTemp"     "pHinsitu"      
-# [17] "dateString"     "treatName"      "treatpH"        "treatTemp"     
-# [21] "treatOther"     "dic"            "BottleCohort"   "treatment"     
-# [25] "SEQ"            "Manufacturer"   "CHMBR"          "BottleTime"    
-# [29] "BottleDate"     "BottleNumber"   "insert"         "Manufacturer_1"
-# [33] "Treatment" 
-jar_History <- subset(jar_History, select = -c(experiment,
-                                               time, 
-                                              pHat25,
-                                              fileName,
-                                              treatName,
-                                              treatpH, 
-                                              treatTemp,
-                                              treatOther,
-                                              BottleCohort,
-                                              treatment))
-jarTest <- jarTest %>%
-  dplyr::rename(BottleID = BottleCohort)
+ 
+# jarTest <- jarTest %>%
+#   dplyr::rename(BottleID = BottleCohort)
 
 jar_History <- jar_History %>%
   dplyr::rename(BottleID = BottleNumber)
 
 
-bottle_pH <- subset(jarTest, id_1 == "Bottle", select = c(BottleID, 
-                                                          pHinsitu))
+# bottle_pH <- subset(jarTest, id_1 == "Bottle", select = c(BottleID, 
+#                                                           pHinsitu))
+# bottle_History <- merge(bottle_pH, bottleMAP, by = "BottleID")
 
-bottle_History <- merge(bottle_pH, bottleMAP, by = "BottleID")
-jar_History <- merge(jar_History, bottle_History, by = "BottleID")
+jar_History <- merge(jar_History, bottleMAP, by = "BottleID")
 
 
 names(jar_History)
 #  [1] "BottleID"          "JarID"             "unit"              "unit_number"       "id_1"             
 #  [6] "id_2"              "id_3"              "date"              "salinity"          "unit_ID"          
-# [11] "alk"               "insituTemp"        "pHinsitu.x"        "dateString"        "dic"              
-# [16] "SEQ"               "Manufacturer"      "CHMBR"             "BottleTime"        "BottleDate"       
-# [21] "insert"            "Manufacturer_1"    "Treatment.x"       "pHinsitu.y"        "SourceSalinity"   
-# [26] "BubbleEndSalinity" "Treatment.y"       "Bottle_pHinsitu" 
+# [11] "pHinsitu"          "tankTemp"          "treatment"         "SEQ"               "Manufacturer"     
+# [16] "CHMBR"             "BottleTime"        "BottleDate"        "insert"            "Manufacturer_1"   
+# [21] "Treatment.x"       "SourceSalinity"    "BubbleEndSalinity" "Treatment.x"       "Day00_pHiinsitu"  
+# [26] "X6"                "X7"                "X8"                "X9"                "X10"              
+# [31] "X11"               "X12"               "X13"              
 
-
-# "BottleID"      - keep
-# "JarID"         - keep
-# "unit"          - remove  
-# "unit_number"   - mehh keep      
-# "id_1"          - container type "Jar" or "Bottle"   
-# "id_2"          - insert and manufacturer    
-# "id_3"          - Jar ID    
-# "date"          - POSIXct format of dates    
-# "salinity"      - ending salinity - keep but you have it later    
-# "unit_ID"       - Chamber_9 or Chamber_10 I want this one
-# "alk"           - alkinity constant
-# "insituTemp"    - remove
-# "pHinsitu.x"    - keep and rename for Day 03 pH SPECs
-# "dateString"    - character string - don't need    
-# "dic"           - keep   
-# "SEQ"           - keep to compare to the original list so I can see where the breaks are from 1 to 28? 
-# "Manufacturer"  - Keep - I like the initials
-# "CHMBR"         - remove    
-# "BottleTime"    - fine- keep    
-# "BottleDate"    - fine- keep   
-# "insert"        - remove    
-# "Manufacturer_1" - remove this one   
-# "Treatment.x"   - rename just Treatment    
-# "pHinsitu.y"    - can remove we have it for "Bottle_pHinsitu"    
-# "SourceSalinity"    - keep
-# "BubbleEndSalinity" - keep 
-# "Treatment.y"     - remove  
-# "Bottle_pHinsitu" - keep
-
-# For removing: "unit" , insituTemp, "CHMBR", insert, Manufacturer_1, Treatment.y
-jar_History <- subset(jar_History, select = -c(unit,
-                                               insituTemp, 
-                                              CHMBR,
-                                              id_3,
-                                              insert,
-                                              Manufacturer_1,
-                                              Treatment.y))
-# List to rename:
-# "id_1"          - container type "Jar" or "Bottle"
-# pHinsitu.x
-# Treatment.x
-# "pHinsitu.y
+# #Cleaning if any of jar history
+jar_History <- subset(jar_History, select = -c(tankTemp,
+                                               Treatment.x,
+                                              Treatment.x,
+                                              X6,
+                                              X7,
+                                              X8,
+                                              X9,
+                                              X10,
+                                              X11,
+                                              X12,
+                                              X13))
 
 jar_History <- jar_History %>%
-  dplyr::rename(container_type = id_1)
-
-jar_History <- jar_History %>%
-  dplyr::rename(Day03_pHinsitu = pHinsitu.x)
-
-jar_History <- jar_History %>%
-  dplyr::rename(Treatment = Treatment.x)
-
-jar_History <- jar_History %>%
-  dplyr::rename(Day00_pHinsitu = pHinsitu.y)
+  dplyr::rename(Day03_pHinsitu = pHinsitu)
 
 
 jar_History$delta_pH <- ""
-jar_History$delta_pH <- jar_History$Bottle_pHinsitu-jar_History$Day03_pHinsitu
+jar_History$delta_pH <- jar_History$Day00_pHiinsitu-jar_History$Day03_pHinsitu
 
 
 ```
 
 
-
-
-#### Cleaning up the jar_History documents
-```{r}
-
-names(jar_History)
-# Anything else I want to remove?
-# jar_History <- subset(jar_History, select = -c(unit,
-#                                                unit_number, 
-#                                               id_2,
-#                                               id_3,
-#                                               Manufacturer_1,
-#                                               BottleTime,
-#                                               BottleDate))
-
-
-
-```
 
 ##### Creating Hydrogen Concentration Numbers
 ```{r}
@@ -276,7 +229,7 @@ jar_History$HydroIons_Day03 <- ""
 jar_History$HydroIons_Day03 <- calcHfromPH(jar_History$Day03_pHinsitu)
 
 jar_History$HydroIons_Day00 <- ""
-jar_History$HydroIons_Day00 <- calcHfromPH(jar_History$Bottle_pHinsitu)
+jar_History$HydroIons_Day00 <- calcHfromPH(jar_History$Day00_pHiinsitu)
 
 jar_History$delta_HydroIons <- jar_History$HydroIons_Day03-jar_History$HydroIons_Day00
 
@@ -289,15 +242,11 @@ write.csv(jar_History, file = "jar_History.csv", row.names = FALSE)
 #### 3.1) Plotting Hydrogen Ion Difference
 ```{r}
 
-Chamber09jars = subset(jar_History, unit_ID.x == "Chamber_9")
-Chamber10jars = subset(jar_History, unit_ID.x == "Chamber_10")
-Bottle10jars = subset(bottle_History, unit_ID == "Chamber_10")
-
-HydrogenIon_plot1 <- ggplot(jar_History, aes(unit_ID.x, delta_HydroIons)) +
+HydrogenIon_plot1 <- ggplot(jar_History, aes(unit_ID, delta_HydroIons)) +
             # geom_jitter(color = "grey") +
             geom_point(data = jar_History, 
-                       aes(unit_ID.x, delta_HydroIons, colour = id_2)) +
-            facet_wrap(~Treatment) +
+                       aes(unit_ID, delta_HydroIons, colour = id_2)) +
+            facet_wrap(~treatment) +
             xlab("Unit ID (Chamber Number)") +
             ylab("Change in Hydrogen Ion Concentration") +
             ggtitle("72 hour Hydrogen Concentration Difference") +
@@ -321,13 +270,15 @@ HydrogenIon_plot1 + centeredTitle_theme
 
 ```{r}
 
+Chamber09jars = subset(jar_History, unit_ID == "Chamber_9")
+
 CH09_pH_plot1 <- ggplot(Chamber09jars, aes(JarID, Day03_pHinsitu)) +
             # geom_jitter(color = "grey") +
             geom_point(data = Chamber09jars, 
-                       aes(BottleID, Bottle_pHinsitu)) +
+                       aes(BottleID, Day00_pHiinsitu)) +
             geom_point(data = Chamber09jars, 
                        aes(JarID, Day03_pHinsitu, colour = id_2)) +
-            facet_wrap(~Treatment) +
+            facet_wrap(~treatment) +
             xlab("Jar and Bottle ID") +
             ylab("pH (measured at both Day03 & Day 00") +
             ggtitle("72 hour pH Bottle Jar Difference (CH09)") +
@@ -335,10 +286,10 @@ CH09_pH_plot1 <- ggplot(Chamber09jars, aes(JarID, Day03_pHinsitu)) +
 
 CH09_pH_plot1
 
-CH09_pH_plot1 + theme(axis.text=element_text(size=5),
+p9a <- CH09_pH_plot1 + theme(axis.text=element_text(size=5),
         axis.title=element_text(size=7,face="bold"))
 
-unique(Chamber09jars$JarID)
+p9a + theme(axis.text.x = element_text(angle = 30))
 
 ```
 
@@ -346,13 +297,15 @@ unique(Chamber09jars$JarID)
 
 ```{r}
 
+Chamber10jars = subset(jar_History, unit_ID  == "Chamber_10")
+
 CH10_pH_plot1 <- ggplot(Chamber10jars, aes(JarID, Day03_pHinsitu)) +
             # geom_jitter(color = "grey") +
-            geom_point(data = bottle_History, 
-                       aes(BottleID, Bottle_pHinsitu)) +
+            geom_point(data = Chamber10jars, 
+                       aes(BottleID, Day00_pHiinsitu)) +
             geom_point(data = Chamber10jars, 
                        aes(JarID, Day03_pHinsitu, colour = id_2)) +
-            facet_wrap(~Treatment) +
+            facet_wrap(~treatment) +
             xlab("Jar and Bottle ID") +
             ylab("pH (measured at both Day03 & Day 00") +
             ggtitle("72 hour pH Bottle Jar Difference (CH10)") +
@@ -363,45 +316,171 @@ CH10_pH_plot1
 p10 <- CH10_pH_plot1 + theme(axis.text=element_text(size=5),
         axis.title=element_text(size=7,face="bold"))
 
-p10 + theme(axis.text.x = element_text(angle = 30))
+p10a<- p10 + theme(axis.text.x = element_text(angle = 30))
+p10a
+
+```
+
+#### Comparing to other repeatability tests
+
+```{r}
+
+names(repeatability)
+#  [1] "experiment"  "unit"        "unit_number" "id_1"        "id_2"        "id_3"        "time"        "date"       
+#  [9] "salinity"    "pHat25"      "fileName"    "unit_ID"     "alk"         "insituTemp"  "pHinsitu"    "dateString" 
+# [17] "treatName"   "treatpH"     "treatTemp"   "treatOther"  "dic"         "tankTemp"
+
+names(rpt_cohort1)
+
+rpt_cohort1to3 <- rbind(rpt_cohort1,
+                    rpt_cohort2,  
+                    rpt_cohort3)
+
+rpt_cohorts <- merge(rpt_cohort1to3, rpt_map, by = "TRIS_ID")
+
+calcHfromPH <- function(pH){
+  H <- 10^(-pH)
+  H <- H *1000000000
+  return(H)
+}
+
+calcPHfromH <- function(H){
+  H <- H / 1000000000
+  pH <- -log10(H)
+  return(pH)
+}
+
+rpt_cohorts$HydroIons_end <- ""
+rpt_cohorts$HydroIons_end <- calcHfromPH(rpt_cohorts$pHinsitu_end)
+
+rpt_cohorts$HydroIons_start <- ""
+rpt_cohorts$HydroIons_start <- calcHfromPH(rpt_cohorts$pHinsitu_start)
+
+rpt_cohorts$delta_HydroIons <- rpt_cohorts$HydroIons_start-rpt_cohorts$HydroIons_end
+
+rpt_cohorts <- rpt_cohorts %>%
+  dplyr::rename(TRIS_cohort = cohort.y)
+
+HydrogenIon_TRISplot1 <- ggplot(rpt_cohorts, aes(id_1, delta_HydroIons)) +
+            # geom_jitter(color = "grey") +
+            geom_point(data = rpt_cohorts, 
+                       aes(id_1, delta_HydroIons, colour = TRIS_cohort)) +
+            facet_wrap(~Round) +
+            xlab("Tris Round Number") +
+            ylab("Change in Hydrogen Ion Concentration") +
+            ggtitle("Hydrogen Concentration Difference") +
+            ggeasy::easy_center_title() +
+            theme_bw() 
+
+HydrogenIon_TRISplot1 
+
+
+
+centeredTitle_theme = theme(plot.title = 
+element_text(hjust = 0.5))
+
+HydrogenIon_TRISplot1 + centeredTitle_theme
+
+
+```
+
+Comparing the TRIS results. 
+
+
+```{r}
+
+calcHfromPH <- function(pH){
+  H <- 10^(-pH)
+  H <- H *1000000000
+  return(H)
+}
+
+calcPHfromH <- function(H){
+  H <- H / 1000000000
+  pH <- -log10(H)
+  return(pH)
+}
+
+IO_val$HydroIons_end <- ""
+IO_val$HydroIons_end <- calcHfromPH(IO_val$pHinsitu_end)
+
+IO_val$HydroIons_start <- ""
+IO_val$HydroIons_start <- calcHfromPH(IO_val$pHinsitu_start)
+
+IO_val$delta_HydroIons <- IO_val$HydroIons_start-IO_val$HydroIons_end
+
+
+HydrogenIon_IOplot1 <- ggplot(IO_val, aes(id_1), delta_HydroIons) +
+            geom_point(data = IO_val, 
+                       aes(id_1, delta_HydroIons)) +
+            # facet_wrap(~Round) +
+            xlab("Instant Ocean Test (arbitrary groups)") +
+            ylab("Change in Hydrogen Ion Concentration") +
+            ggtitle("Hydrogen Concentration Difference (all samples compared to first IO sample)") +
+            ggeasy::easy_center_title() +
+            theme_bw() 
+
+HydrogenIon_IOplot1 
 
 
 ```
 
 
-#### 3.2) Fun with Plots
-```{r Fun with Plots by treatment}
 
-jarTest.summary <- jarTest %>% group_by(treatment) %>%
-  dplyr::summarize(sd = sd(pHinsitu, na.rm = TRUE), 
-            mean = mean(pHinsitu, na.rm = TRUE), 
-            median = median(pHinsitu, na.rm = TRUE),
-            IQR = IQR(pHinsitu, na.rm = TRUE),
-            n = n()) %>%
-  mutate(se = sd/sqrt(n)) %>%
-  mutate(ci = se*1.96)
-jarTest.summary
+```{r}
 
-
-jarTest.summary_boxplot <- ggplot(jarTest, aes(treatment, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_jitter(data = jarTest, aes(treatment, pHinsitu, colour = id_1)) +
-            geom_boxplot(notch = TRUE, outlier.shape = NA, colour = "green") +
-            geom_point(data = jarTest.summary, aes(x=treatment, y=mean), size=5, color = "purple") + 
-            geom_errorbar(data = jarTest.summary, 
-                          aes(x=treatment, y=mean, ymin = mean-sd, ymax = mean+sd), 
-                          color = "blue") +
-            geom_errorbar(data = jarTest.summary,
-                          aes(x=treatment, y=mean, ymin = mean-ci, ymax = mean+ci),
-                          colour = "red") +
-            # # facet_wrap(~placeholder) +
-            # xlab("Treatment") +
-            # ylab("non-Corrected pH") +
-            # ggtitle("pH insitu across treatments") +
+pH_IOplot1 <- ggplot(IO_val, aes(id_1), pHinsitu_end) +
+            geom_point(data = IO_val, 
+                       aes(id_1, pHinsitu_end)) +
+            geom_point(data = IO_val, 
+                       aes(id_1, pHinsitu_start)) +
+            # facet_wrap(~Round) +
+            xlab("Instant Ocean Test (arbitrary groups)") +
+            ylab("Change in pH Between Samples") +
+            ggtitle("pH Difference (all samples compared to first IO sample)") +
+            ggeasy::easy_center_title() +
             theme_bw() 
 
-jarTest.summary_boxplot
+pH_IOplot1
 
+```
+
+
+
+
+#### 3.2) Fun with Plots
+```{r Fun with Plots by treatment}
+# 
+# jarTest.summary <- jarTest %>% group_by(treatment) %>%
+#   dplyr::summarize(sd = sd(pHinsitu, na.rm = TRUE), 
+#             mean = mean(pHinsitu, na.rm = TRUE), 
+#             median = median(pHinsitu, na.rm = TRUE),
+#             IQR = IQR(pHinsitu, na.rm = TRUE),
+#             n = n()) %>%
+#   mutate(se = sd/sqrt(n)) %>%
+#   mutate(ci = se*1.96)
+# jarTest.summary
+# 
+# 
+# jarTest.summary_boxplot <- ggplot(jarTest, aes(treatment, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_jitter(data = jarTest, aes(treatment, pHinsitu, colour = id_1)) +
+#             geom_boxplot(notch = TRUE, outlier.shape = NA, colour = "green") +
+#             geom_point(data = jarTest.summary, aes(x=treatment, y=mean), size=5, color = "purple") + 
+#             geom_errorbar(data = jarTest.summary, 
+#                           aes(x=treatment, y=mean, ymin = mean-sd, ymax = mean+sd), 
+#                           color = "blue") +
+#             geom_errorbar(data = jarTest.summary,
+#                           aes(x=treatment, y=mean, ymin = mean-ci, ymax = mean+ci),
+#                           colour = "red") +
+#             # # facet_wrap(~placeholder) +
+#             # xlab("Treatment") +
+#             # ylab("non-Corrected pH") +
+#             # ggtitle("pH insitu across treatments") +
+#             theme_bw() 
+# 
+# jarTest.summary_boxplot
+# 
 
 # TODO were things mislabeled?
 # need to only select bottles and then jars 
@@ -415,44 +494,44 @@ jarTest.summary_boxplot
 
 ### 3.3) creating bottle cohort averages/constants
 ```{r}
-
-unique(jarTest$BottleCohort)
- # [1] "CH09_01"  "CH10_01"  "CH10_02"  "CH10_03"  "CH09_03"  "CH10_03a" "CH09_03a"
- # [8] "CH09_04"  "CH10_04"  "CH09_02"  "N/A" 
-
-# both chambers set to Low CO2 conditions 9/27/2021 to 9/30/2021
-# "LoCO2_30AUG21"
-LoCO2_treatment <- mean(subset(jarTest, id_3 == "LoCO2_30AUG21", select = c(pHinsitu))$pHinsitu)
-
-# CH09_01 SPEC samples from 9/27/2021
-CH09_01start <- mean(subset(jarTest, id_3 == "CH09_01", select = c(pHinsitu))$pHinsitu)
-
-# CH09_02 SPEC samples from 9/27/2021
-CH09_02start <- mean(subset(jarTest, id_3 == "CH09_02", select = c(pHinsitu))$pHinsitu)
-
-
-# CH10_01 SPEC samples from 9/27/2021
-CH10_01start <- mean(subset(jarTest, id_3 == "CH10_01", select = c(pHinsitu))$pHinsitu)
-
-# CH10_02 SPEC samples from 9/27/2021
-CH10_02start <- mean(subset(jarTest, id_3 == "CH10_02", select = c(pHinsitu))$pHinsitu)
-
-# CH09_03 SPEC samples from 9/27/2021
-CH09_03start <- mean(subset(jarTest, id_3 == "CH09_03", select = c(pHinsitu))$pHinsitu)
-
-
-# CH10_03 SPEC samples from 9/27/2021
-CH10_03start <- mean(subset(jarTest, id_3 == "CH10_03", select = c(pHinsitu))$pHinsitu)
-
-# CH10_03a SPEC samples from 9/27/2021
-CH10_03astart <- mean(subset(jarTest, id_3 == "CH10_03a", select = c(pHinsitu))$pHinsitu)
-
-
-# CH09_04 SPEC samples from 9/27/2021
-CH09_04astart <- mean(subset(jarTest, id_3 == "CH09_04", select = c(pHinsitu))$pHinsitu)
-
-# CH10_04 SPEC samples from 9/27/2021
-CH10_04astart <- mean(subset(jarTest, id_3 == "CH10_04", select = c(pHinsitu))$pHinsitu)
+# 
+# unique(jarTest$BottleCohort)
+#  # [1] "CH09_01"  "CH10_01"  "CH10_02"  "CH10_03"  "CH09_03"  "CH10_03a" "CH09_03a"
+#  # [8] "CH09_04"  "CH10_04"  "CH09_02"  "N/A" 
+# 
+# # both chambers set to Low CO2 conditions 9/27/2021 to 9/30/2021
+# # "LoCO2_30AUG21"
+# LoCO2_treatment <- mean(subset(jarTest, id_3 == "LoCO2_30AUG21", select = c(pHinsitu))$pHinsitu)
+# 
+# # CH09_01 SPEC samples from 9/27/2021
+# CH09_01start <- mean(subset(jarTest, id_3 == "CH09_01", select = c(pHinsitu))$pHinsitu)
+# 
+# # CH09_02 SPEC samples from 9/27/2021
+# CH09_02start <- mean(subset(jarTest, id_3 == "CH09_02", select = c(pHinsitu))$pHinsitu)
+# 
+# 
+# # CH10_01 SPEC samples from 9/27/2021
+# CH10_01start <- mean(subset(jarTest, id_3 == "CH10_01", select = c(pHinsitu))$pHinsitu)
+# 
+# # CH10_02 SPEC samples from 9/27/2021
+# CH10_02start <- mean(subset(jarTest, id_3 == "CH10_02", select = c(pHinsitu))$pHinsitu)
+# 
+# # CH09_03 SPEC samples from 9/27/2021
+# CH09_03start <- mean(subset(jarTest, id_3 == "CH09_03", select = c(pHinsitu))$pHinsitu)
+# 
+# 
+# # CH10_03 SPEC samples from 9/27/2021
+# CH10_03start <- mean(subset(jarTest, id_3 == "CH10_03", select = c(pHinsitu))$pHinsitu)
+# 
+# # CH10_03a SPEC samples from 9/27/2021
+# CH10_03astart <- mean(subset(jarTest, id_3 == "CH10_03a", select = c(pHinsitu))$pHinsitu)
+# 
+# 
+# # CH09_04 SPEC samples from 9/27/2021
+# CH09_04astart <- mean(subset(jarTest, id_3 == "CH09_04", select = c(pHinsitu))$pHinsitu)
+# 
+# # CH10_04 SPEC samples from 9/27/2021
+# CH10_04astart <- mean(subset(jarTest, id_3 == "CH10_04", select = c(pHinsitu))$pHinsitu)
 
 
 
@@ -467,20 +546,20 @@ CH10_04astart <- mean(subset(jarTest, id_3 == "CH10_04", select = c(pHinsitu))$p
 # Subselect/select only observation with BottleCohort == "CH09_01"
 ## Add Y axis intercept = CH09_01start
 
-bc_ch09_01 = subset(jarTest, BottleCohort == "CH09_01")
-jarTest.CH09_01sum_plot <- ggplot(bc_ch09_01, aes(id_3, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_point(data = bc_ch09_01, aes(id_3, pHinsitu)) +
-            geom_hline(yintercept = CH09_01start) +
-            facet_wrap(~id_2) +
-            # xlim(1,2) +
-            ylim(8.3, 7.2) +
-            # xlab("placeholder") +
-            # ylab("placeholder") +
-            ggtitle("72 hour Variation Between Source Bottle and Jar") +
-            theme_bw() 
-
-jarTest.CH09_01sum_plot 
+# bc_ch09_01 = subset(jarTest, BottleCohort == "CH09_01")
+# jarTest.CH09_01sum_plot <- ggplot(bc_ch09_01, aes(id_3, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_point(data = bc_ch09_01, aes(id_3, pHinsitu)) +
+#             geom_hline(yintercept = CH09_01start) +
+#             facet_wrap(~id_2) +
+#             # xlim(1,2) +
+#             ylim(8.3, 7.2) +
+#             # xlab("placeholder") +
+#             # ylab("placeholder") +
+#             ggtitle("72 hour Variation Between Source Bottle and Jar") +
+#             theme_bw() 
+# 
+# jarTest.CH09_01sum_plot 
 
 # jarTest.CH09_01sum_plot  + scale_y_reverse()
 
@@ -494,22 +573,22 @@ jarTest.CH09_01sum_plot
 #### CH10_01 cohort plot
 ```{r}
 
-unique(jarTest$BottleCohort)
-
-bc_ch10_01 = subset(jarTest, BottleCohort == "CH10_01")
-jarTest.CH10_01sum_plot <- ggplot(bc_ch10_01, aes(id_3, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_point(data = bc_ch10_01, aes(id_3, pHinsitu)) +
-            geom_hline(yintercept = CH10_01start) +
-            facet_wrap(~id_2) +
-            # xlim(1,2) +
-            ylim(8.3, 7.2) +
-            # xlab("placeholder") +
-            # ylab("placeholder") +
-            ggtitle("72 hour Variation Between Source Bottle and Jar") +
-            theme_bw() 
-
-jarTest.CH10_01sum_plot
+# unique(jarTest$BottleCohort)
+# 
+# bc_ch10_01 = subset(jarTest, BottleCohort == "CH10_01")
+# jarTest.CH10_01sum_plot <- ggplot(bc_ch10_01, aes(id_3, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_point(data = bc_ch10_01, aes(id_3, pHinsitu)) +
+#             geom_hline(yintercept = CH10_01start) +
+#             facet_wrap(~id_2) +
+#             # xlim(1,2) +
+#             ylim(8.3, 7.2) +
+#             # xlab("placeholder") +
+#             # ylab("placeholder") +
+#             ggtitle("72 hour Variation Between Source Bottle and Jar") +
+#             theme_bw() 
+# 
+# jarTest.CH10_01sum_plot
 
 ```
 
@@ -520,20 +599,20 @@ jarTest.CH10_01sum_plot
 #### CH09_02 cohort plot
 ```{r}
 
-bc_ch09_02 = subset(jarTest, BottleCohort == "CH09_02")
-jarTest.CH10_02sum_plot <- ggplot(bc_ch09_02, aes(id_3, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_point(data = bc_ch09_02, aes(id_3, pHinsitu)) +
-            geom_hline(yintercept = CH09_02start) +
-            facet_wrap(~id_2) +
-            # xlim(1,2) +
-            ylim(8.3, 7.2) +
-            # xlab("placeholder") +
-            # ylab("placeholder") +
-            ggtitle("72 hour Variation Between Source Bottle and Jar (CH09_02") +
-            theme_bw() 
-
-jarTest.CH10_02sum_plot
+# bc_ch09_02 = subset(jarTest, BottleCohort == "CH09_02")
+# jarTest.CH10_02sum_plot <- ggplot(bc_ch09_02, aes(id_3, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_point(data = bc_ch09_02, aes(id_3, pHinsitu)) +
+#             geom_hline(yintercept = CH09_02start) +
+#             facet_wrap(~id_2) +
+#             # xlim(1,2) +
+#             ylim(8.3, 7.2) +
+#             # xlab("placeholder") +
+#             # ylab("placeholder") +
+#             ggtitle("72 hour Variation Between Source Bottle and Jar (CH09_02") +
+#             theme_bw() 
+# 
+# jarTest.CH10_02sum_plot
 
 ```
 
@@ -548,20 +627,20 @@ jarTest.CH10_02sum_plot
 #### CH10_02 cohort plot
 ```{r}
 
-bc_ch10_02 = subset(jarTest, BottleCohort == "CH10_02")
-jarTest.CH10_02sum_plot <- ggplot(bc_ch10_02, aes(id_3, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_point(data = bc_ch10_02, aes(id_3, pHinsitu)) +
-            geom_hline(yintercept = CH10_02start) +
-            facet_wrap(~id_2) +
-            # xlim(1,2) +
-            ylim(8.3, 7.2) +
-            # xlab("placeholder") +
-            # ylab("placeholder") +
-            ggtitle("72 hour Variation Between Source Bottle and Jar (CH10_02") +
-            theme_bw() 
-
-jarTest.CH10_02sum_plot
+# bc_ch10_02 = subset(jarTest, BottleCohort == "CH10_02")
+# jarTest.CH10_02sum_plot <- ggplot(bc_ch10_02, aes(id_3, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_point(data = bc_ch10_02, aes(id_3, pHinsitu)) +
+#             geom_hline(yintercept = CH10_02start) +
+#             facet_wrap(~id_2) +
+#             # xlim(1,2) +
+#             ylim(8.3, 7.2) +
+#             # xlab("placeholder") +
+#             # ylab("placeholder") +
+#             ggtitle("72 hour Variation Between Source Bottle and Jar (CH10_02") +
+#             theme_bw() 
+# 
+# jarTest.CH10_02sum_plot
 
 ```
 
@@ -572,22 +651,22 @@ jarTest.CH10_02sum_plot
 #### CH09_03 cohort plot
 ```{r}
 
-unique(jarTest$BottleCohort)
-
-bc_ch09_03 = subset(jarTest, BottleCohort == "CH09_03")
-jarTest.CH09_03sum_plot <- ggplot(bc_ch09_03, aes(id_3, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_point(data = bc_ch09_03, aes(id_3, pHinsitu)) +
-            geom_hline(yintercept = CH09_03start) +
-            facet_wrap(~id_2) +
-            # xlim(1,2) +
-            ylim(8.3, 7.2) +
-            # xlab("placeholder") +
-            # ylab("placeholder") +
-            ggtitle("72 hour Variation Between Source Bottle and Jar") +
-            theme_bw() 
-
-jarTest.CH09_03sum_plot
+# unique(jarTest$BottleCohort)
+# 
+# bc_ch09_03 = subset(jarTest, BottleCohort == "CH09_03")
+# jarTest.CH09_03sum_plot <- ggplot(bc_ch09_03, aes(id_3, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_point(data = bc_ch09_03, aes(id_3, pHinsitu)) +
+#             geom_hline(yintercept = CH09_03start) +
+#             facet_wrap(~id_2) +
+#             # xlim(1,2) +
+#             ylim(8.3, 7.2) +
+#             # xlab("placeholder") +
+#             # ylab("placeholder") +
+#             ggtitle("72 hour Variation Between Source Bottle and Jar") +
+#             theme_bw() 
+# 
+# jarTest.CH09_03sum_plot
 
 ```
 
@@ -597,22 +676,22 @@ jarTest.CH09_03sum_plot
 #### CH10_03 cohort plot
 ```{r}
 
-unique(jarTest$BottleCohort)
-
-bc_ch10_03 = subset(jarTest, BottleCohort == "CH10_03")
-jarTest.CH10_03sum_plot <- ggplot(bc_ch10_03, aes(id_3, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_point(data = bc_ch10_03, aes(id_3, pHinsitu)) +
-            geom_hline(yintercept = CH10_03start) +
-            facet_wrap(~id_2) +
-            # xlim(1,2) +
-            ylim(8.3, 7.2) +
-            # xlab("placeholder") +
-            # ylab("placeholder") +
-            ggtitle("72 hour Variation Between Source Bottle and Jar") +
-            theme_bw() 
-
-jarTest.CH10_01sum_plot
+# unique(jarTest$BottleCohort)
+# 
+# bc_ch10_03 = subset(jarTest, BottleCohort == "CH10_03")
+# jarTest.CH10_03sum_plot <- ggplot(bc_ch10_03, aes(id_3, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_point(data = bc_ch10_03, aes(id_3, pHinsitu)) +
+#             geom_hline(yintercept = CH10_03start) +
+#             facet_wrap(~id_2) +
+#             # xlim(1,2) +
+#             ylim(8.3, 7.2) +
+#             # xlab("placeholder") +
+#             # ylab("placeholder") +
+#             ggtitle("72 hour Variation Between Source Bottle and Jar") +
+#             theme_bw() 
+# 
+# jarTest.CH10_01sum_plot
 
 ```
 
@@ -622,22 +701,22 @@ jarTest.CH10_01sum_plot
 #### CH09_03a cohort plot
 ```{r}
 
-unique(jarTest$BottleCohort)
-
-bc_ch09_03a = subset(jarTest, BottleCohort == "CH09_03a")
-jarTest.CH09_03asum_plot <- ggplot(bc_ch09_03a, aes(id_3, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_point(data = bc_ch09_03a, aes(id_3, pHinsitu)) +
-            geom_hline(yintercept = CH09_03astart) +
-            facet_wrap(~id_2) +
-            # xlim(1,2) +
-            ylim(8.3, 7.2) +
-            # xlab("placeholder") +
-            # ylab("placeholder") +
-            ggtitle("72 hour Variation Between Source Bottle and Jar") +
-            theme_bw() 
-
-jarTest.CH09_03asum_plot 
+# unique(jarTest$BottleCohort)
+# 
+# bc_ch09_03a = subset(jarTest, BottleCohort == "CH09_03a")
+# jarTest.CH09_03asum_plot <- ggplot(bc_ch09_03a, aes(id_3, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_point(data = bc_ch09_03a, aes(id_3, pHinsitu)) +
+#             geom_hline(yintercept = CH09_03astart) +
+#             facet_wrap(~id_2) +
+#             # xlim(1,2) +
+#             ylim(8.3, 7.2) +
+#             # xlab("placeholder") +
+#             # ylab("placeholder") +
+#             ggtitle("72 hour Variation Between Source Bottle and Jar") +
+#             theme_bw() 
+# 
+# jarTest.CH09_03asum_plot 
 
 ```
 
@@ -646,22 +725,22 @@ jarTest.CH09_03asum_plot
 #### CH10_03a cohort plot
 ```{r}
 
-unique(jarTest$BottleCohort)
-
-bc_ch10_03a = subset(jarTest, BottleCohort == "CH10_03a")
-jarTest.CH10_03asum_plot <- ggplot(bc_ch10_03a, aes(id_3, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_point(data = bc_ch10_03a, aes(id_3, pHinsitu)) +
-            geom_hline(yintercept = CH10_03astart) +
-            facet_wrap(~id_2) +
-            # xlim(1,2) +
-            ylim(8.3, 7.2) +
-            # xlab("placeholder") +
-            # ylab("placeholder") +
-            ggtitle("72 hour Variation Between Source Bottle and Jar") +
-            theme_bw() 
-
-jarTest.CH10_03asum_plot 
+# unique(jarTest$BottleCohort)
+# 
+# bc_ch10_03a = subset(jarTest, BottleCohort == "CH10_03a")
+# jarTest.CH10_03asum_plot <- ggplot(bc_ch10_03a, aes(id_3, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_point(data = bc_ch10_03a, aes(id_3, pHinsitu)) +
+#             geom_hline(yintercept = CH10_03astart) +
+#             facet_wrap(~id_2) +
+#             # xlim(1,2) +
+#             ylim(8.3, 7.2) +
+#             # xlab("placeholder") +
+#             # ylab("placeholder") +
+#             ggtitle("72 hour Variation Between Source Bottle and Jar") +
+#             theme_bw() 
+# 
+# jarTest.CH10_03asum_plot 
 
 ```
 
@@ -673,22 +752,22 @@ jarTest.CH10_03asum_plot
 #### CH09_04 cohort plot
 ```{r}
 
-unique(jarTest$BottleCohort)
-
-bc_ch09_04 = subset(jarTest, BottleCohort == "CH09_04")
-jarTest.CH09_04sum_plot <- ggplot(bc_ch09_04, aes(id_3, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_point(data = bc_ch09_04, aes(id_3, pHinsitu)) +
-            geom_hline(yintercept = CH09_04start) +
-            facet_wrap(~id_2) +
-            # xlim(1,2) +
-            ylim(8.3, 7.2) +
-            # xlab("placeholder") +
-            # ylab("placeholder") +
-            ggtitle("72 hour Variation Between Source Bottle and Jar") +
-            theme_bw() 
-
-jarTest.CH09_04sum_plot
+# unique(jarTest$BottleCohort)
+# 
+# bc_ch09_04 = subset(jarTest, BottleCohort == "CH09_04")
+# jarTest.CH09_04sum_plot <- ggplot(bc_ch09_04, aes(id_3, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_point(data = bc_ch09_04, aes(id_3, pHinsitu)) +
+#             geom_hline(yintercept = CH09_04start) +
+#             facet_wrap(~id_2) +
+#             # xlim(1,2) +
+#             ylim(8.3, 7.2) +
+#             # xlab("placeholder") +
+#             # ylab("placeholder") +
+#             ggtitle("72 hour Variation Between Source Bottle and Jar") +
+#             theme_bw() 
+# 
+# jarTest.CH09_04sum_plot
 
 ```
 
@@ -697,22 +776,22 @@ jarTest.CH09_04sum_plot
 #### CH09_04a cohort plot
 ```{r}
 
-unique(jarTest$BottleCohort)
-
-bc_ch09_04a = subset(jarTest, BottleCohort == "CH09_04a")
-jarTest.CH09_04asum_plot <- ggplot(bc_ch09_04a, aes(id_3, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_point(data = bc_ch09_04a, aes(id_3, pHinsitu)) +
-            geom_hline(yintercept = CH09_04astart) +
-            facet_wrap(~id_2) +
-            # xlim(1,2) +
-            ylim(8.3, 7.2) +
-            # xlab("placeholder") +
-            # ylab("placeholder") +
-            ggtitle("72 hour Variation Between Source Bottle and Jar") +
-            theme_bw() 
-
-jarTest.CH09_04asum_plot 
+# unique(jarTest$BottleCohort)
+# 
+# bc_ch09_04a = subset(jarTest, BottleCohort == "CH09_04a")
+# jarTest.CH09_04asum_plot <- ggplot(bc_ch09_04a, aes(id_3, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_point(data = bc_ch09_04a, aes(id_3, pHinsitu)) +
+#             geom_hline(yintercept = CH09_04astart) +
+#             facet_wrap(~id_2) +
+#             # xlim(1,2) +
+#             ylim(8.3, 7.2) +
+#             # xlab("placeholder") +
+#             # ylab("placeholder") +
+#             ggtitle("72 hour Variation Between Source Bottle and Jar") +
+#             theme_bw() 
+# 
+# jarTest.CH09_04asum_plot 
 
 ```
 
@@ -722,22 +801,22 @@ jarTest.CH09_04asum_plot
 #### CH10_04a cohort plot
 ```{r}
 
-unique(jarTest$BottleCohort)
-
-bc_ch10_04a = subset(jarTest, BottleCohort == "CH10_04a")
-jarTest.CH10_04asum_plot <- ggplot(bc_ch10_04a, aes(id_3, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_point(data = bc_ch10_04a, aes(id_3, pHinsitu)) +
-            geom_hline(yintercept = CH10_04astart) +
-            facet_wrap(~id_2) +
-            # xlim(1,2) +
-            ylim(8.3, 7.2) +
-            # xlab("placeholder") +
-            # ylab("placeholder") +
-            ggtitle("72 hour Variation Between Source Bottle and Jar") +
-            theme_bw() 
-
-jarTest.CH10_04asum_plot 
+# unique(jarTest$BottleCohort)
+# 
+# bc_ch10_04a = subset(jarTest, BottleCohort == "CH10_04a")
+# jarTest.CH10_04asum_plot <- ggplot(bc_ch10_04a, aes(id_3, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_point(data = bc_ch10_04a, aes(id_3, pHinsitu)) +
+#             geom_hline(yintercept = CH10_04astart) +
+#             facet_wrap(~id_2) +
+#             # xlim(1,2) +
+#             ylim(8.3, 7.2) +
+#             # xlab("placeholder") +
+#             # ylab("placeholder") +
+#             ggtitle("72 hour Variation Between Source Bottle and Jar") +
+#             theme_bw() 
+# 
+# jarTest.CH10_04asum_plot 
 
 ```
 
@@ -747,22 +826,22 @@ jarTest.CH10_04asum_plot
 #### CH10_04 cohort plot
 ```{r}
 
-unique(jarTest$BottleCohort)
-
-bc_ch10_04 = subset(jarTest, BottleCohort == "CH10_04")
-jarTest.CH10_04sum_plot <- ggplot(bc_ch10_04, aes(id_3, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_point(data = bc_ch10_04, aes(id_3, pHinsitu)) +
-            geom_hline(yintercept = CH10_04start) +
-            facet_wrap(~id_2) +
-            # xlim(1,2) +
-            ylim(8.3, 7.2) +
-            # xlab("placeholder") +
-            # ylab("placeholder") +
-            ggtitle("72 hour Variation Between Source Bottle and Jar") +
-            theme_bw() 
-
-jarTest.CH10_04sum_plot 
+# unique(jarTest$BottleCohort)
+# 
+# bc_ch10_04 = subset(jarTest, BottleCohort == "CH10_04")
+# jarTest.CH10_04sum_plot <- ggplot(bc_ch10_04, aes(id_3, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_point(data = bc_ch10_04, aes(id_3, pHinsitu)) +
+#             geom_hline(yintercept = CH10_04start) +
+#             facet_wrap(~id_2) +
+#             # xlim(1,2) +
+#             ylim(8.3, 7.2) +
+#             # xlab("placeholder") +
+#             # ylab("placeholder") +
+#             ggtitle("72 hour Variation Between Source Bottle and Jar") +
+#             theme_bw() 
+# 
+# jarTest.CH10_04sum_plot 
 
 ```
 
@@ -770,26 +849,26 @@ jarTest.CH10_04sum_plot
 ## By Chamber, 72 hour Variation Between Source Bottle and Jar
 ```{r}
 
-ggplot(jarTest, aes(id_3, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_point(data = jarTest, aes(id_3, pHinsitu)) +
-            geom_hline(yintercept = CH09_01start) +
-            geom_hline(yintercept = CH09_02start) +
-            geom_hline(yintercept = CH09_03start) +
-            geom_hline(yintercept = CH09_04astart) +
-              # xlim(1,2) +
-            geom_hline(yintercept = CH10_01start) +
-            geom_hline(yintercept = CH10_02start) +
-            geom_hline(yintercept = CH10_03start) +
-            geom_hline(yintercept = CH10_03astart) +
-            geom_hline(yintercept = CH10_04astart) +
-            facet_wrap(~unit_number) +
-            # xlim(1,2) +
-            ylim(8.3, 7.2) +
-            # xlab("placeholder") +
-            # ylab("placeholder") +
-            ggtitle("72 hour Variation Between Source Bottle and Jar") +
-            theme_bw() 
+# ggplot(jarTest, aes(id_3, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_point(data = jarTest, aes(id_3, pHinsitu)) +
+#             geom_hline(yintercept = CH09_01start) +
+#             geom_hline(yintercept = CH09_02start) +
+#             geom_hline(yintercept = CH09_03start) +
+#             geom_hline(yintercept = CH09_04astart) +
+#               # xlim(1,2) +
+#             geom_hline(yintercept = CH10_01start) +
+#             geom_hline(yintercept = CH10_02start) +
+#             geom_hline(yintercept = CH10_03start) +
+#             geom_hline(yintercept = CH10_03astart) +
+#             geom_hline(yintercept = CH10_04astart) +
+#             facet_wrap(~unit_number) +
+#             # xlim(1,2) +
+#             ylim(8.3, 7.2) +
+#             # xlab("placeholder") +
+#             # ylab("placeholder") +
+#             ggtitle("72 hour Variation Between Source Bottle and Jar") +
+#             theme_bw() 
 
 
 ```
@@ -799,30 +878,30 @@ ggplot(jarTest, aes(id_3, pHinsitu)) +
 ## By Chamber, 72 hour Variation Between Source Bottle and Jar by Treatment
 ```{r}
 
-ggplot(jarTest, aes(treatment, pHinsitu)) +
-            # geom_jitter(color = "grey") +
-            geom_point(data = jarTest, aes(treatment, pHinsitu, colour=id_2)) +
-            geom_hline(yintercept = CH09_01start) +
-            geom_hline(yintercept = CH09_02start) +
-            geom_hline(yintercept = CH09_03start) +
-            geom_hline(yintercept = CH09_04astart) +
-              # xlim(1,2) +
-            geom_hline(yintercept = CH10_01start) +
-            geom_hline(yintercept = CH10_02start) +
-            geom_hline(yintercept = CH10_03start) +
-            geom_hline(yintercept = CH10_03astart) +
-            geom_hline(yintercept = CH10_04astart) +
-  
-            geom_hline(yintercept = LoCO2_treatment) +
-  
-            facet_wrap(~unit_number) +
-            # xlim(1,2) +
-            ylim(8.3, 7.2) +
-            # xlab("placeholder") +
-            # ylab("placeholder") +
-            ggtitle("72 hour Variation Between Source Bottle and Jar") +
-            theme_bw() 
-
+# ggplot(jarTest, aes(treatment, pHinsitu)) +
+#             # geom_jitter(color = "grey") +
+#             geom_point(data = jarTest, aes(treatment, pHinsitu, colour=id_2)) +
+#             geom_hline(yintercept = CH09_01start) +
+#             geom_hline(yintercept = CH09_02start) +
+#             geom_hline(yintercept = CH09_03start) +
+#             geom_hline(yintercept = CH09_04astart) +
+#               # xlim(1,2) +
+#             geom_hline(yintercept = CH10_01start) +
+#             geom_hline(yintercept = CH10_02start) +
+#             geom_hline(yintercept = CH10_03start) +
+#             geom_hline(yintercept = CH10_03astart) +
+#             geom_hline(yintercept = CH10_04astart) +
+#   
+#             geom_hline(yintercept = LoCO2_treatment) +
+#   
+#             facet_wrap(~unit_number) +
+#             # xlim(1,2) +
+#             ylim(8.3, 7.2) +
+#             # xlab("placeholder") +
+#             # ylab("placeholder") +
+#             ggtitle("72 hour Variation Between Source Bottle and Jar") +
+#             theme_bw() 
+# 
 
 ```
 
@@ -831,90 +910,90 @@ ggplot(jarTest, aes(treatment, pHinsitu)) +
 # 4.) Can Kate Case_When 
 ```{r}
 
-jarTest$TreatmentCatagory <- ""
-jarTest$TreatmentCatagory <- "placeholder"
-
-jarTest$Container_ID <- ""
-jarTest$Container_ID <- "placeholder"
-
-jarTest$Container_Cohort <- ""
-jarTest$Container_Cohort <- "placeholder"
-
-# want Treatment category to be as follows:
-# HiCO2 if ID_1 was "jar" 
-#                   and collected on 8/30/21 
-#                   and unit_ID was "Chamber_10"
-# MidCO2 if ID_1 was "jar" 
-#                   and collected on 8/30/21 
-#                   and unit_ID was "Chamber_09"
-# LoCO2 if ID_1 was "bottle"
-                    # and was collected on 8/30/21
-
-
-
-
-# bring in HiCO2
-jarTest <- mutate(jarTest, TreatmentCategory = case_when(
-                                      (jarTest$id_1 == "Jar") &
-                                      (jarTest$date == as.POSIXct("2021-08-30")) &
-                                      (jarTest$unit_ID == "Chamber_10")  ~ "HiCO2",
-                                      
-                                      (jarTest$id_1 == "Jar") &
-                                      (jarTest$date == as.POSIXct("2021-08-30")) &
-                                      (jarTest$unit_ID == "Chamber_9")  ~ "MidCO2",   
-                                      
-                                      (jarTest$id_1 == "Bottle") &
-                                      (jarTest$date == "2021-08-30") ~ "LoCO2",                          
-                                      TRUE ~"other"
-                                        )
-                                      )
-
-# # testing only against one variable
-# if_else()
-
-as.POSIXct("2021-08-30")
-
-           
-# bring in MidCO2
-mutate(jarTest$TreatmentCatagory = case_when(
-                                      (jarTest$id_1 == "Jar")
-                                      & (jarTest$date == "2021-08-27") 
-                                      & (jarTest$unit_ID == "Chamber_9")  ~ "MidCO2",                          
-                                      TRUE ~"other"
-                                        )
-                                      )
-
-# bring in LoCO2
-mutate(jarTest$TreatmentCatagory = case_when(
-                                      (jarTest$id_1 == "Bottle")
-                                      & (jarTest$date == "2021-08-30") ~ "LoCO2",                          
-                                      TRUE ~"other"
-                                        )
-                                      )
-
-
-
-rename(jarTest, id_3 = Jar_ID)
-rename(jarMap, JarID = Jar_ID)
-
-jarTest <- jarTest %>%
-  dplyr::rename(id_3 = Jar_ID)
-
-jarTest <- jarTest %>%
-  rename(Jar_ID = id_3) %>%
-  full_join(jarMAP)
-
-
-CTD_log_0623_clean <- CTD_log_0623 %>%
-  dplyr::rename(new_temperature = temperature)
-
-dTankCNDCT <- merge(UDACNDCT, SPECCNDCT, all = TRUE)
-
-jarTEST_SPEC <- merge(jarTest, jarMap, by = JarID id_3)
-
-
-
-
+# jarTest$TreatmentCatagory <- ""
+# jarTest$TreatmentCatagory <- "placeholder"
+# 
+# jarTest$Container_ID <- ""
+# jarTest$Container_ID <- "placeholder"
+# 
+# jarTest$Container_Cohort <- ""
+# jarTest$Container_Cohort <- "placeholder"
+# 
+# # want Treatment category to be as follows:
+# # HiCO2 if ID_1 was "jar" 
+# #                   and collected on 8/30/21 
+# #                   and unit_ID was "Chamber_10"
+# # MidCO2 if ID_1 was "jar" 
+# #                   and collected on 8/30/21 
+# #                   and unit_ID was "Chamber_09"
+# # LoCO2 if ID_1 was "bottle"
+#                     # and was collected on 8/30/21
+# 
+# 
+# 
+# 
+# # bring in HiCO2
+# jarTest <- mutate(jarTest, TreatmentCategory = case_when(
+#                                       (jarTest$id_1 == "Jar") &
+#                                       (jarTest$date == as.POSIXct("2021-08-30")) &
+#                                       (jarTest$unit_ID == "Chamber_10")  ~ "HiCO2",
+#                                       
+#                                       (jarTest$id_1 == "Jar") &
+#                                       (jarTest$date == as.POSIXct("2021-08-30")) &
+#                                       (jarTest$unit_ID == "Chamber_9")  ~ "MidCO2",   
+#                                       
+#                                       (jarTest$id_1 == "Bottle") &
+#                                       (jarTest$date == "2021-08-30") ~ "LoCO2",                          
+#                                       TRUE ~"other"
+#                                         )
+#                                       )
+# 
+# # # testing only against one variable
+# # if_else()
+# 
+# as.POSIXct("2021-08-30")
+# 
+#            
+# # bring in MidCO2
+# mutate(jarTest$TreatmentCatagory = case_when(
+#                                       (jarTest$id_1 == "Jar")
+#                                       & (jarTest$date == "2021-08-27") 
+#                                       & (jarTest$unit_ID == "Chamber_9")  ~ "MidCO2",                          
+#                                       TRUE ~"other"
+#                                         )
+#                                       )
+# 
+# # bring in LoCO2
+# mutate(jarTest$TreatmentCatagory = case_when(
+#                                       (jarTest$id_1 == "Bottle")
+#                                       & (jarTest$date == "2021-08-30") ~ "LoCO2",                          
+#                                       TRUE ~"other"
+#                                         )
+#                                       )
+# 
+# 
+# 
+# rename(jarTest, id_3 = Jar_ID)
+# rename(jarMap, JarID = Jar_ID)
+# 
+# jarTest <- jarTest %>%
+#   dplyr::rename(id_3 = Jar_ID)
+# 
+# jarTest <- jarTest %>%
+#   rename(Jar_ID = id_3) %>%
+#   full_join(jarMAP)
+# 
+# 
+# CTD_log_0623_clean <- CTD_log_0623 %>%
+#   dplyr::rename(new_temperature = temperature)
+# 
+# dTankCNDCT <- merge(UDACNDCT, SPECCNDCT, all = TRUE)
+# 
+# jarTEST_SPEC <- merge(jarTest, jarMap, by = JarID id_3)
+# 
+# 
+# 
+# 
 
 
 # # Example from Paul's PNX code on transfer sheets:
@@ -964,41 +1043,41 @@ jarTEST_SPEC <- merge(jarTest, jarMap, by = JarID id_3)
 # 5.) Jar Test Summary
 ```{r  Jar Test Summary}
 
-jarTest$pH_of_sample_without_correction <- as.numeric(jarTest$pH_of_sample_without_correction)
+# jarTest$pH_of_sample_without_correction <- as.numeric(jarTest$pH_of_sample_without_correction)
+# 
+# 
+# jarTest.summary <- jarTest %>% group_by(Treatment) %>%
+#   dplyr::summarize(sd = sd(pH_of_sample_without_correction, na.rm = TRUE), 
+#             mean = mean(pH_of_sample_without_correction, na.rm = TRUE), 
+#             median = median(pH_of_sample_without_correction, na.rm = TRUE),
+#             IQR = IQR(pH_of_sample_without_correction, na.rm = TRUE),
+#             n = n()) %>%
+#   mutate(se = sd/sqrt(n)) %>%
+#   mutate(ci = se*1.96)
+# jarTest.summary
+# 
+# 
+# jarTest.summary_boxplot <- ggplot(jarTest, aes(Treatment, pH_of_sample_without_correction)) +
+#             # geom_jitter(color = "grey") +
+#             geom_jitter(data = jarTest, aes(Treatment, pH_of_sample_without_correction)) +
+#             geom_boxplot(notch = TRUE, outlier.shape = NA, colour = "green") +
+#             geom_point(data = jarTest.summary, aes(x=Treatment, y=mean), size=5, color = "purple") + 
+#             geom_errorbar(data = jarTest.summary, 
+#                           aes(x=Treatment, y=mean, ymin = mean-sd, ymax = mean+sd), 
+#                           color = "blue") +
+#             geom_errorbar(data = jarTest.summary,
+#                           aes(x=Treatment, y=mean, ymin = mean-ci, ymax = mean+ci),
+#                           colour = "red") +
+#             # # facet_wrap(~placeholder) +
+#             # xlab("Treatment") +
+#             # ylab("non-Corrected pH") +
+#             # ggtitle("non Temperature Corrected pH across Brands") +
+#             theme_bw() 
+# 
+# jarTest.summary_boxplot
 
-
-jarTest.summary <- jarTest %>% group_by(Treatment) %>%
-  dplyr::summarize(sd = sd(pH_of_sample_without_correction, na.rm = TRUE), 
-            mean = mean(pH_of_sample_without_correction, na.rm = TRUE), 
-            median = median(pH_of_sample_without_correction, na.rm = TRUE),
-            IQR = IQR(pH_of_sample_without_correction, na.rm = TRUE),
-            n = n()) %>%
-  mutate(se = sd/sqrt(n)) %>%
-  mutate(ci = se*1.96)
-jarTest.summary
-
-
-jarTest.summary_boxplot <- ggplot(jarTest, aes(Treatment, pH_of_sample_without_correction)) +
-            # geom_jitter(color = "grey") +
-            geom_jitter(data = jarTest, aes(Treatment, pH_of_sample_without_correction)) +
-            geom_boxplot(notch = TRUE, outlier.shape = NA, colour = "green") +
-            geom_point(data = jarTest.summary, aes(x=Treatment, y=mean), size=5, color = "purple") + 
-            geom_errorbar(data = jarTest.summary, 
-                          aes(x=Treatment, y=mean, ymin = mean-sd, ymax = mean+sd), 
-                          color = "blue") +
-            geom_errorbar(data = jarTest.summary,
-                          aes(x=Treatment, y=mean, ymin = mean-ci, ymax = mean+ci),
-                          colour = "red") +
-            # # facet_wrap(~placeholder) +
-            # xlab("Treatment") +
-            # ylab("non-Corrected pH") +
-            # ggtitle("non Temperature Corrected pH across Brands") +
-            theme_bw() 
-
-jarTest.summary_boxplot
-
-kable(jarTest.summary, digits = 4)
-write.csv(jarTest.summary, "ISO_KRL_jarTest.summary.csv")
+# kable(jarTest.summary, digits = 4)
+# write.csv(jarTest.summary, "ISO_KRL_jarTest.summary.csv")
 
 
 ```

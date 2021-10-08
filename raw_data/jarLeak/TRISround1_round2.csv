@@ -1,0 +1,14 @@
+﻿experiment,unit,unit_number,id_1,id_2,id_3,time,date,salinity,pHat25,fileName,unit_ID,alk,insituTemp,pHinsitu,dateString,treatName,treatpH,treatTemp,treatOther,dic,tankTemp
+Zoea,Chamber,-99,round_1,NA,NA,NA,4/28/21,33.30356093,7.996076884,TRIS_validation_round1_April_2021.xlsx,Chamber_NA,2199.173775,NA,7.996076884,4/28/21,,NA,NA,,1947.575279,NA
+Zoea,Chamber,-99,round_1,NA,NA,NA,4/28/21,33.30356093,8.292976514,TRIS_validation_round1_April_2021.xlsx,Chamber_NA,2199.173775,NA,8.292976514,4/28/21,,NA,NA,,1765.583477,NA
+Zoea,Chamber,-99,round_1,NA,NA,NA,4/28/21,33.30356093,7.907578399,TRIS_validation_round1_April_2021.xlsx,Chamber_NA,2199.173775,NA,7.907578399,4/28/21,,NA,NA,,1991.634471,NA
+Zoea,Chamber,1,round_2,NA,NA,0.458333333,5/17/21,33.3,8.122444578,TRIS_validation_round2_May_2021.xlsx,Chamber_1,2198.9945,15,8.276553111,5/17/21,Low_pH_High_T,7.2,15,,1876.415593,NA
+Zoea,Chamber,1,round_2,NA,NA,0.458333333,5/17/21,33.3,8.127727351,TRIS_validation_round2_May_2021.xlsx,Chamber_1,2198.9945,15,8.281916595,5/17/21,Low_pH_High_T,7.2,15,,1873.234452,NA
+Zoea,Chamber,1,round_2,NA,NA,0.458333333,5/17/21,33.3,8.123687333,TRIS_validation_round2_May_2021.xlsx,Chamber_1,2198.9945,15,8.277814888,5/17/21,Low_pH_High_T,7.2,15,,1875.668767,NA
+Zoea,Chamber,1,round_2,NA,NA,0.458333333,5/17/21,33.3,8.12100733,TRIS_validation_round2_May_2021.xlsx,Chamber_1,2198.9945,15,8.275093839,5/17/21,Low_pH_High_T,7.2,15,,1877.278126,NA
+Zoea,Chamber,1,round_2,NA,NA,0.458333333,5/17/21,33.3,8.125324036,TRIS_validation_round2_May_2021.xlsx,Chamber_1,2198.9945,15,8.279476609,5/17/21,Low_pH_High_T,7.2,15,,1874.683766,NA
+Zoea,Chamber,1,round_2,NA,NA,0.458333333,5/17/21,33.3,8.119430847,TRIS_validation_round2_May_2021.xlsx,Chamber_1,2198.9945,15,8.273493165,5/17/21,Low_pH_High_T,7.2,15,,1878.222772,NA
+Zoea,Chamber,1,round_2,NA,NA,0.458333333,5/17/21,33.3,8.109093055,TRIS_validation_round2_May_2021.xlsx,Chamber_1,2198.9945,15,8.262995829,5/17/21,Low_pH_High_T,7.2,15,,1884.37975,NA
+,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,
+,,,,,,, ,,,,,,,,,,,,,,
